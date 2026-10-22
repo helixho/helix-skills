@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Reusable Agent Skills for clarifying intent, handing off sessions, defining a brand, and evaluating skills.
+Reusable Agent Skills for clarifying intent, delegating work, handing off sessions, defining a brand, and evaluating skills.
 
 Each skill is a self-contained directory with a `SKILL.md` entry point and any templates, references, or scripts it needs. Skill instructions are primarily in Chinese; some references and code are in English.
 
@@ -11,11 +11,12 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 | Skill | Purpose | Example request |
 |---|---|---|
 | [helix-clarify](skills/helix-clarify/SKILL.md) | Resolve omissions, references, and self-corrections in conversational Chinese; ask only questions that affect execution. | “Help me clarify this request before deciding how to proceed.” |
+| [helix-delegation](skills/helix-delegation/SKILL.md) | Split substantial work, brief agents, and verify delegated results across Codex and Claude Code. | “Delegate independent parts of this task and review the results.” |
 | [helix-handoff](skills/helix-handoff/SKILL.md) | Produce a reviewable session handoff that works across tools. | “Prepare a handoff so the next session can finish verification.” |
 | [helix-ip](skills/helix-ip/SKILL.md) | Define brand facts, positioning, messaging, and visual direction; review materials against that definition. | “Turn these materials into a brand IP.md.” |
 | [helix-skill-eval](skills/helix-skill-eval/SKILL.md) | Check skill package structure and record evaluations against a versioned rubric with evidence. | “Check this skill's structure; use the full assessment only if a score is needed.” |
 
-The first three skills use instructions or templates and require no scripts. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
+`helix-clarify`, `helix-handoff`, and `helix-ip` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
 
 ## Get started
 
@@ -37,9 +38,11 @@ ln -s "$PWD/skills/helix-clarify" "$HOME/.agents/skills/helix-clarify"
 
 If the target name already exists, inspect the existing installation and choose which source to use. In a new session, invoke the skill explicitly with `$helix-clarify`.
 
-In Codex, `helix-clarify` and `helix-ip` allow automatic selection by description. `helix-handoff` and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff` and `$helix-skill-eval`. Follow the skill discovery and invocation conventions of other runtimes.
+In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff` and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff` and `$helix-skill-eval`. Follow the skill discovery and invocation conventions of other runtimes.
 
 You can also ask an agent to read a selected `SKILL.md` and follow it for the current task.
+
+For delegation, install the selected runtime's role templates using its [Codex adapter](skills/helix-delegation/references/runtime-codex.md) or [Claude Code adapter](skills/helix-delegation/references/runtime-claude-code.md). Model defaults are replaceable examples; the skill does not install or change your runtime configuration.
 
 ## Run a structural check
 
@@ -63,6 +66,14 @@ printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .ven
 ```
 
 The `conformant` result reports structural conformance. For a full assessment, the caller supplies judgments and evidence; the script validates those inputs and aggregates the result. Structural conformance or a score alone does not establish runtime behavior. See [helix-skill-eval](skills/helix-skill-eval/SKILL.md) for the full workflow.
+
+## Run behavior tests
+
+The delegation reporter is tested with synthetic traces; tests never read your sessions:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
+```
 
 ## License
 

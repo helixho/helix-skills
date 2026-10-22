@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delegation"
+  short_description: "Delegate substantial work to subagents or agent CLIs and review the result"
+  default_prompt: "Use $helix-delegation to decide whether this task benefits from delegation; work directly if it does not, and review any delegated results before accepting them."
