@@ -1,7 +1,7 @@
 name = "Explorer"
 description = "Read-only code locator for a large codebase when the parent explicitly needs help finding the primary files and entry points."
 model = "gpt-6-luna"
-model_reasoning_effort = "medium"
+model_reasoning_effort = "high"
 nickname_candidates = ["Ada", "Babbage", "Curie", "Dirac", "Euler", "Faraday"]
 
 developer_instructions = """
