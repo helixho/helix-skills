@@ -18,6 +18,10 @@ _ALLOWED_FRONTMATTER_FIELDS = {
     "metadata",
     "allowed-tools",
 }
+# Runtime-specific fields outside the specification, accepted with a warning naming the runtime.
+_RUNTIME_EXTENSION_FIELDS = {
+    "disable-model-invocation": ("Claude Code", bool),
+}
 
 
 def _parse_skill_markdown(path: Path) -> tuple[dict[str, Any] | None, str, list[str]]:
@@ -58,9 +62,16 @@ def validate_skill_directory(skill_dir: Path) -> dict[str, Any]:
         errors.extend(parse_errors)
 
     if frontmatter is not None:
-        unknown = sorted(set(frontmatter) - _ALLOWED_FRONTMATTER_FIELDS)
+        unknown = sorted(set(frontmatter) - _ALLOWED_FRONTMATTER_FIELDS - set(_RUNTIME_EXTENSION_FIELDS))
         if unknown:
             errors.append(f"unsupported top-level frontmatter fields: {', '.join(unknown)}")
+        for field, (runtime, kind) in sorted(_RUNTIME_EXTENSION_FIELDS.items()):
+            if field not in frontmatter:
+                continue
+            if not isinstance(frontmatter[field], kind):
+                errors.append(f"{field} must be a {kind.__name__}")
+            else:
+                warnings.append(f"{field} is a {runtime} extension outside the Agent Skills specification")
 
         name = frontmatter.get("name")
         if not isinstance(name, str) or not name:

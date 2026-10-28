@@ -40,7 +40,8 @@ and never writes SQLite or runtime state.
 Before scoring a skill, run the `validate` command with its source directory as
 `skill_dir`. This deterministic precheck validates the current Agent Skills
 directory and frontmatter contract, including the closed set of allowed
-top-level fields. Keep every reported conformance error as a finding; do not
+top-level fields; known runtime extensions such as Claude Code's
+`disable-model-invocation` pass with a warning. Keep every reported conformance error as a finding; do not
 normalize or edit the assessed skill.
 
 The individual-skill scoring standard is the built-in
