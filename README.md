@@ -14,7 +14,7 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 | [helix-delegation](skills/helix-delegation/SKILL.md) | Split substantial work, brief agents, and verify delegated results across Codex and Claude Code. | “Delegate independent parts of this task and review the results.” |
 | [helix-handoff](skills/helix-handoff/SKILL.md) | Produce a reviewable session handoff that works across tools. | “Prepare a handoff so the next session can finish verification.” |
 | [helix-ip](skills/helix-ip/SKILL.md) | Define brand facts, positioning, messaging, and visual direction; review materials against that definition. | “Turn these materials into a brand IP.md.” |
-| [helix-rule-review](skills/helix-rule-review/SKILL.md) | Logically review rules for contradictions, gaps, precedence, terms, redundancy, and broken references, and arguments for support, causation, and premises. | “Use rule review to check whether these rules contradict each other.” |
+| [helix-rule-review](skills/helix-rule-review/SKILL.md) | Logically review rules for contradictions, gaps, precedence, terms, redundancy, and broken references, and arguments for support, causation, premises, and means to goals. | “Use rule review to check whether these rules contradict each other.” |
 | [helix-skill-eval](skills/helix-skill-eval/SKILL.md) | Check skill package structure and record evaluations against a versioned rubric with evidence. | “Check this skill's structure; use the full assessment only if a score is needed.” |
 
 `helix-clarify`, `helix-handoff`, `helix-ip`, and `helix-rule-review` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
