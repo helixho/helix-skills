@@ -1,8 +1,9 @@
 ---
 name: helix-handoff
 description: >-
-  Session handoff——在长会话结束、换 session、换 agent、暂停继续或用户要求交接时，生成跨工具中立、用户可审阅的 continuation brief，保留目标、边界、决策、已完成事项、未完成事项、相关 artifact、风险和下一步，不写长期 memory。
-  触发于长会话结束/换 session/换 agent/暂停继续/用户要求交接——"交接一下/换个会话继续/handoff/把上下文整理给下一个 agent"。
+  Session handoff——在用户要求交接（换 session、换 agent、暂停后继续）时，生成跨工具中立、用户可审阅的 continuation brief，保留目标、边界、决策、已完成事项、未完成事项、相关 artifact、风险和下一步，不写长期 memory。
+  触发于用户说"交接一下/换个会话继续/handoff/把上下文整理给下一个 agent"。
+disable-model-invocation: true
 metadata:
   author: Helix
 ---
@@ -16,9 +17,8 @@ compact, not long-term memory, not a spec or a plan.
 
 Optional focus: “下一场会话要聚焦什么”。
 
-- Current session state, at the moment the user pauses, switches session,
-  switches agent, or asks to hand off.
-- `$ARGUMENTS`, when provided: what the next session will focus on. Tailor the
+- Current session state, at the moment the user asks to hand off.
+- The focus the user gave when invoking the skill, if any: what the next session will focus on. Tailor the
   brief to it — carry the context that focus needs and drop the rest.
 
 ## Output

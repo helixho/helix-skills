@@ -39,7 +39,7 @@ ln -s "$PWD/skills/helix-clarify" "$HOME/.agents/skills/helix-clarify"
 
 目标名称已存在时，先查看已有安装并决定使用哪一份。新会话中可以用 `$helix-clarify` 显式调用。
 
-Codex 中，`helix-clarify`、`helix-delegation` 和 `helix-ip` 可按描述自动选择；`helix-handoff`、`helix-rule-review` 和 `helix-skill-eval` 默认仅显式调用，分别使用 `$helix-handoff`、`$helix-rule-review` 和 `$helix-skill-eval`；`helix-rule-review` 在 Claude Code 中同样仅显式调用（`/helix-rule-review`）。其他运行时按其本地 skill 发现与调用方式使用。
+Codex 中，`helix-clarify`、`helix-delegation` 和 `helix-ip` 可按描述自动选择；`helix-handoff`、`helix-rule-review` 和 `helix-skill-eval` 默认仅显式调用，分别使用 `$helix-handoff`、`$helix-rule-review` 和 `$helix-skill-eval`；`helix-handoff` 和 `helix-rule-review` 在 Claude Code 中同样仅显式调用（`/helix-handoff`、`/helix-rule-review`）。其他运行时按其本地 skill 发现与调用方式使用。
 
 也可以直接让 Agent 读取某个 `SKILL.md`，按其中流程处理当前任务。
 

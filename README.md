@@ -39,7 +39,7 @@ ln -s "$PWD/skills/helix-clarify" "$HOME/.agents/skills/helix-clarify"
 
 If the target name already exists, inspect the existing installation and choose which source to use. In a new session, invoke the skill explicitly with `$helix-clarify`.
 
-In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff`, `helix-rule-review`, and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff`, `$helix-rule-review`, and `$helix-skill-eval`. `helix-rule-review` is also explicit-only in Claude Code (`/helix-rule-review`). Follow the skill discovery and invocation conventions of other runtimes.
+In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff`, `helix-rule-review`, and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff`, `$helix-rule-review`, and `$helix-skill-eval`. `helix-handoff` and `helix-rule-review` are also explicit-only in Claude Code (`/helix-handoff`, `/helix-rule-review`). Follow the skill discovery and invocation conventions of other runtimes.
 
 You can also ask an agent to read a selected `SKILL.md` and follow it for the current task.
 

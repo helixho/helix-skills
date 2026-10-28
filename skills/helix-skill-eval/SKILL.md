@@ -51,7 +51,8 @@ The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
 Its ID, version, and complete-file hash are recorded automatically. Do not
 accept a caller-supplied rubric or override; a new standard requires a new
-versioned reference file and an explicit registry change in this kit.
+versioned reference file and an explicit entry in the rubric registry
+(`_RUBRIC_REGISTRY` in `scripts/helix_skill_kit/eval.py`).
 
 For every scorecard, set `runtime_status` to `not_checked`, `passed`, or
 `failed`. Put source/conformance evidence in `authoring_evidence`. Use
@@ -69,7 +70,6 @@ Eval.
 
 - Read skill source directories and runtime state only; do not write a skill,
   runtime link, or upstream source.
-- Do not persist or register Helix-owned skills in a knowledge base.
 - Return the rubric ID, version, hash, content snapshot hash, authoring/runtime
   evidence, findings, and advisory suggestions for every assessment.
 - A suggestion to Study, link, defer, or consider a source project is not a

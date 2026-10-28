@@ -1,13 +1,13 @@
 ---
 name: helix-delegation
-description: "Split, brief, and review delegated work. Use when the user requests delegation or independent review, or when a large task can be split into non-overlapping parts and parallel work is clearly faster."
+description: "Split, brief, and review delegated work. Use when the user requests delegation or independent review, when a large task can be split into non-overlapping parts and parallel work is clearly faster, or when a risky result or high-impact decision warrants an independent review or expert view."
 metadata:
   compatibility: "Runtime adapters for Codex and Claude Code; CLI executors need the target CLI installed and signed in. Diagnostics scripts need Python 3.10+."
 ---
 
 # Delegation
 
-Delegate when the user asks for it, or when a large task can be split into non-overlapping parts and parallel work is clearly faster. Otherwise work directly. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
+Delegate when the user asks for it, when a large task can be split into non-overlapping parts and parallel work is clearly faster, or when a result or decision warrants an independent `Reviewer` or `ExpertAdvisor` (see Roles and Independent review). Otherwise work directly. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
 
 ## Runtime adapter
 
