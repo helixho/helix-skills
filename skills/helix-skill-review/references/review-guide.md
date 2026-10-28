@@ -75,10 +75,12 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 **Maintainability**
 
-- Every bundled file earns its place: something live loads, runs, or
-  references it. Flag fixtures no runner uses, compatibility shims with no
-  caller, material for work the skill hands off, and concepts named but never
-  defined or defined but never used.
+- Read every file `validate` lists. Each one is reached through the skill's own
+  reading path (a pointer in `SKILL.md` or in another reached file, or code
+  that loads it) or loaded by a host convention such as `agents/openai.yaml`,
+  and is needed for the job. Flag unreached files, fixtures no runner uses,
+  compatibility shims with no caller, material for work the skill hands off,
+  and concepts named but never defined or defined but never used.
 - Prose states the capability and leaves the mechanism to the script, config,
   or schema that declares it, so there is one source of truth.
 - Machine-checkable rules (routing, accepted inputs, failure conditions, output
@@ -89,7 +91,7 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 - Resources are found relative to the skill and commands through `PATH`.
 - Dependencies are declared in `compatibility`, a requirements file, or a clear
   import error.
-- For a published skill, apply Publication isolation below.
+- Apply Independence below.
 
 **Trust boundary**
 
@@ -113,24 +115,32 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 **Evidence quality**
 
-- Judged by the labels above and how much of the entry, references, and scripts
-  the evidence covers.
+- Judged by the labels above and how many of the files `validate` lists the
+  evidence covers.
 
-## Publication isolation
+## Independence
 
-Apply when the skill is published or meant to run outside its owner's
-environment.
+Apply to every skill: it must work as a standalone package.
 
-- It neither references nor depends on the owner's private tools, knowledge
-  base, installed applications, repository layout, or workflows.
-- It contains no personal home paths; examples use placeholders such as
-  `/Users/example/`, `/home/user/`, or `<skill-name>`.
+- Each file a reader loads under the skill's own reading rules stands on its
+  own. It does not rely on content the skill tells that reader not to load,
+  such as another runtime's adapter.
+- It assumes no tool, CLI, runtime, service, or account is available unless it
+  declares the dependency (in the description, `compatibility`, or a
+  requirements file) or makes the step conditional on it.
+- It does not reference or depend on its owner's private environment (tools,
+  knowledge base, installed applications, repository layout, or workflows)
+  unless that environment is the skill's declared job.
 - It explains itself without private project history.
-- Brand and author names, such as a namespace prefix, are identity, not a
-  finding.
 
-`validate` with `"public": true` scans the skill's text files for personal home
-paths. The other checks remain review judgment.
+A published skill also has no dependency on its owner's private environment
+at all, and contains no personal home paths; examples use placeholders such as
+`/Users/example/`, `/home/user/`, or `<skill-name>`. `validate` with
+`"public": true` scans the skill's text files for personal home paths; the other
+checks remain review judgment.
+
+Brand and author names, such as a namespace prefix, are identity, not a
+finding.
 
 ## Reviewing an external skill as a reference
 

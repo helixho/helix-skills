@@ -55,6 +55,7 @@ class ValidateTests(unittest.TestCase):
             result = call({"command": "validate", "skill_dir": str(write_skill(tmp))})["result"]
         self.assertTrue(result["conformant"])
         self.assertEqual(result["warnings"], [])
+        self.assertEqual(result["files"], ["SKILL.md"])
 
     def test_unknown_field_fails(self):
         with tempfile.TemporaryDirectory() as tmp:

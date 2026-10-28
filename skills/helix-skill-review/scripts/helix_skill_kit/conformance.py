@@ -45,6 +45,14 @@ def _parse_skill_markdown(path: Path) -> tuple[dict[str, Any] | None, str, list[
 _HOME_PATH_RE = re.compile(r"(?:/Users/(?!example/)|/home/(?!user/)|[A-Za-z]:\\Users\\(?!example\\))[A-Za-z0-9._-]+")
 
 
+def _skill_files(root: Path) -> list[str]:
+    return sorted(
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts and path.name != ".DS_Store"
+    )
+
+
 def _isolation_findings(root: Path) -> list[str]:
     findings = []
     for path in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
@@ -127,6 +135,7 @@ def validate_skill_directory(skill_dir: Path, public: bool = False) -> dict[str,
 
     result = {
         "skill_dir": str(root),
+        "files": _skill_files(root) if root.is_dir() else [],
         "conformant": not errors,
         "errors": errors,
         "warnings": warnings,

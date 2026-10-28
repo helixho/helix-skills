@@ -15,8 +15,9 @@ Two uses, both ending in concrete improvements to a skill the user owns.
 The default for any request to assess, check, or score a skill.
 
 1. Run `validate` with the skill's source directory as `skill_dir`; for a
-   published skill add `"public": true` to scan for personal home paths. Every
-   conformance error and isolation finding is a finding. If the directory has
+   published skill add `"public": true` to scan for personal home paths. It
+   also lists every file in the skill; step 2 accounts for each one. Every
+   conformance error and personal home path it reports is a finding. If the directory has
    no usable root `SKILL.md`, assess the nested skills it contains instead, or
    report that and stop when there are none.
 2. Apply `references/review-guide.md`: settle Positioning first, then judge each
