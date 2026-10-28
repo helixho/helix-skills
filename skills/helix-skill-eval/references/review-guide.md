@@ -1,8 +1,9 @@
 # Skill Review Guide
 
 How to judge a skill's source so the assessment ends in concrete improvements
-to that skill. Use the checks that bear on each scorecard dimension; record
-what they find as evidence, findings, and suggestions. Logical conflicts inside
+to that skill. Start with Positioning, then use the checks that bear on each
+scorecard dimension; record what they find as evidence, findings, and
+suggestions. Logical conflicts inside
 the instructions are reviewed with `helix-rule-review`.
 
 ## Evidence labels
@@ -14,6 +15,31 @@ Label every finding by what supports it:
 - `missing`: needed for the judgment but not available.
 
 Never present inferred or missing evidence as file-backed.
+
+## Positioning
+
+Settle these before any dimension check; every later judgment is made against
+the positioning established here.
+
+1. **Intended positioning**: establish what the skill is meant to do and when,
+   from the owner's statements, the description, and how it is wired in (for
+   example a hook or routing entry that invokes it on every request). Do not
+   judge it against an assumed narrower or wider role.
+2. **Positioning fit**: the skill does one coherent job, and a skill is the right
+   carrier for it, rather than an always-on rule, a script, or part of a sibling
+   skill.
+3. **Boundary**: what the skill does and does not do is stated. Each overlap with
+   a sibling skill, a host built-in, or the owner's always-on rules is resolved
+   by a handoff or by keeping the rule in one place.
+4. **Capability gaps**: list the cases the job requires and check that each is
+   handled; an unhandled required case is a finding.
+5. **Rule placement**: a rule any user of the skill needs belongs in the skill; a
+   rule that is the owner's personal habit belongs in the owner's personal
+   rules. A rule kept in both places is a finding; keep it where it belongs and
+   drop the other copy.
+
+Positioning findings feed Value and fit (positioning), Uniqueness (boundary and
+placement), and Actionability (capability gaps).
 
 ## Checks by dimension
 

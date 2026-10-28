@@ -54,9 +54,9 @@ The individual-skill scoring standard is the built-in
 The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
 Its ID and complete-file hash are recorded automatically. The rubric is built
-in; do not accept a caller-supplied rubric or override. Judge each dimension
-with the checks in `references/review-guide.md`, label evidence as it
-describes, and end with prioritized improvements to the assessed skill.
+in; do not accept a caller-supplied rubric or override. Start with the positioning
+checks in `references/review-guide.md`, judge each dimension with its checks,
+label evidence as it describes, and end with prioritized improvements to the assessed skill.
 
 Pass the skill's source directory as `skill_dir` and file-backed findings as
 `evidence`. This skill assesses source only: it does not test runtime behavior,
