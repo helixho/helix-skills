@@ -3,19 +3,17 @@
 How to judge a skill's source so the assessment ends in concrete improvements
 to that skill. Start with Positioning, then use the checks that bear on each
 scorecard dimension; record what they find as evidence, findings, and
-suggestions. Logical conflicts inside
-the instructions are reviewed with `helix-logic-review`.
+suggestions. Logical conflicts inside the instructions go to
+`helix-logic-review` when it is installed; otherwise check them in this review.
 
 ## Principles
 
-Every check in this guide applies one of these principles; name the principle a
-finding violates.
+When a finding violates one of these principles, name the principle.
 
 - **Critical thinking**: treat every claim in the skill, and every judgment of
   your own, as needing support. Establish positioning from evidence, label
   evidence, look for counter-evidence, and hold your suggestions to the same
-  standard. The logic of the instructions themselves goes to
-  `helix-logic-review`.
+  standard.
 - **MECE**: inside the skill, sections, files, uses, and steps do not overlap
   and together cover every case the job requires; across skills, each
   responsibility and rule has one owner. Applied in Positioning (boundary,
@@ -30,7 +28,8 @@ finding violates.
 
 ## Evidence labels
 
-Label every finding by what supports it:
+Label every piece of evidence by what supports it; a finding carries the labels
+of its evidence:
 
 - `file-backed`: cites a file and line, or a deterministic check result.
 - `inferred`: reasoned from the source without direct confirmation.
@@ -87,10 +86,9 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 **Uniqueness**
 
-- Compare trigger and boundary with sibling skills and the host's built-in
-  capabilities. A different trigger phrase is not a different capability.
-- An overlap with a sibling that no handoff resolves calls for a merge
-  suggestion.
+- Scored from Positioning boundary and rule placement. A different trigger
+  phrase is not a different capability, and an overlap with a sibling that no
+  handoff resolves calls for a merge suggestion.
 
 **Maintainability**
 
@@ -119,8 +117,8 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 **Trigger quality**
 
-- The description says what the skill does and when to use it, in the user's
-  working language, with concrete request phrases.
+- The description meets Specification and progressive disclosure, in the
+  user's working language, with concrete request phrases.
 - One trigger per distinct case; synonyms of one case are not separate cases.
 - The trigger is neither wider nor narrower than what the body handles. A broad
   automatic trigger for a narrow job is a finding.
@@ -185,8 +183,10 @@ finding.
 
 ## Reviewing an external skill as a reference
 
-Use when an external skill is studied to improve one of the user's own skills,
-the target.
+Use when an external skill is studied, usually to improve one of the user's own
+skills, the target. Without a target, assess the external skill with "Assess a
+skill" in `SKILL.md` instead, ending in whether to enable it on its own or not
+adopt it.
 
 1. Decompose only what could change the target: purpose, trigger model,
    workflow and gates, file layout, output contract, and trust surface.

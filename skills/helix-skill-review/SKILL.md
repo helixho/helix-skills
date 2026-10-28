@@ -2,13 +2,13 @@
 name: helix-skill-review
 description: >-
   评估 skill 以找出改进点：按批判性思维、MECE、奥卡姆剃刀、独立性原则以及 Agent Skills 规范和渐进式披露检查，按内置评分标准记录评分、证据、发现和改进建议，
-  也评估外部 skill 有哪些值得借鉴到自己的 skill。用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”“这个外部 skill 有什么值得借鉴”。
+  也评估外部 skill 值得借鉴什么、是否值得单独启用。用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”“这个外部 skill 有什么值得借鉴”。
   只读源码，不测试运行行为，也不修改 skill 或运行时。
 ---
 
 # Helix Skill Review
 
-Two uses, both ending in concrete improvements to a skill the user owns.
+Two uses: assess a skill, or judge what an external skill offers.
 
 ## Assess a skill
 
@@ -33,9 +33,11 @@ For several skills, assess each one, then rank the improvements across them.
 
 ## Borrow from an external skill
 
-To improve one of the user's own skills from an external one, follow
-"Reviewing an external skill as a reference" in `references/review-guide.md`.
-No scorecard is needed.
+To judge an external skill, follow "Reviewing an external skill as a
+reference" in `references/review-guide.md`: with a target, what to absorb into
+one of the user's own skills, with no scorecard. Without a target, assess it with
+"Assess a skill" above, ending in whether to enable it on its own or not adopt
+it.
 
 ## Script
 
