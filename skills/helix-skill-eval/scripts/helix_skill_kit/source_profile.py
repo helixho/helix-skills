@@ -1,4 +1,4 @@
-"""Versioned source-project profiles; separate from individual skill scoring."""
+"""Source-project profiles; separate from individual skill scoring."""
 
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ _RUBRIC_PATH = Path(__file__).resolve().parents[2] / "references/source-profile-
 @dataclass(frozen=True)
 class SourceProfileRubric:
     identifier: str
-    version: str
     source_hash: str
 
 
@@ -38,9 +37,9 @@ def load_source_profile_rubric() -> SourceProfileRubric:
     if match is None:
         raise ContractError("source-profile rubric has invalid frontmatter")
     fields = {key.strip(): value.strip() for line in match.group("frontmatter").splitlines() if ":" in line for key, value in [line.split(":", 1)]}
-    if fields.get("rubric_id") != "helix-source-profile" or fields.get("version") != "1.0.0":
-        raise ContractError("source-profile rubric metadata is not registered")
-    return SourceProfileRubric("helix-source-profile", "1.0.0", hashlib.sha256(raw).hexdigest())
+    if fields.get("rubric_id") != "helix-source-profile":
+        raise ContractError("built-in source-profile rubric has an unexpected rubric_id")
+    return SourceProfileRubric("helix-source-profile", hashlib.sha256(raw).hexdigest())
 
 
 def validate_profile(value: dict[str, Any]) -> dict[str, Any]:
@@ -81,7 +80,6 @@ class SourceProfileService:
             **profile,
             "rubric": {
                 "id": self.rubric.identifier,
-                "version": self.rubric.version,
                 "hash": self.rubric.source_hash,
             },
         }

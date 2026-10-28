@@ -1,4 +1,4 @@
-"""Versioned, advisory skill evaluation."""
+"""Advisory skill evaluation against the built-in rubric."""
 
 from __future__ import annotations
 
@@ -17,14 +17,13 @@ from .contracts import ContractError, SkillIdentity
 @dataclass(frozen=True)
 class Rubric:
     identifier: str
-    version: str
     content: str
     source_hash: str
 
     def __post_init__(self) -> None:
-        values = (self.identifier, self.version, self.content, self.source_hash)
+        values = (self.identifier, self.content, self.source_hash)
         if not all(isinstance(value, str) and value.strip() for value in values):
-            raise ContractError("rubric id, version, and content are required")
+            raise ContractError("rubric id and content are required")
 
     @property
     def hash(self) -> str:
@@ -43,15 +42,12 @@ class Rubric:
 
 
 _RUBRIC_ROOT = Path(__file__).resolve().parents[2] / "references"
-_RUBRIC_REGISTRY = {
-    ("helix-skill-scorecard", "1.7.0"): _RUBRIC_ROOT / "batch-rubric-v1.7.md",
-}
+_RUBRIC_ID = "helix-skill-scorecard"
+_RUBRIC_PATH = _RUBRIC_ROOT / "scorecard-rubric.md"
 
 
-def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.7.0") -> Rubric:
-    path = _RUBRIC_REGISTRY.get((identifier, version))
-    if path is None:
-        raise ContractError("rubric id/version is not registered")
+def load_rubric() -> Rubric:
+    path = _RUBRIC_PATH
     raw = path.read_bytes()
     text = raw.decode("utf-8")
     match = re.match(r"---\n(?P<frontmatter>.*?)\n---\n(?P<content>.*)", text, re.DOTALL)
@@ -63,9 +59,9 @@ def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.7.0
         if ":" in line
         for key, value in [line.split(":", 1)]
     }
-    if fields.get("rubric_id") != identifier or fields.get("version") != version:
-        raise ContractError("registered rubric metadata does not match its registry key")
-    return Rubric(identifier, version, match.group("content"), hashlib.sha256(raw).hexdigest())
+    if fields.get("rubric_id") != _RUBRIC_ID:
+        raise ContractError("built-in rubric has an unexpected rubric_id")
+    return Rubric(_RUBRIC_ID, match.group("content"), hashlib.sha256(raw).hexdigest())
 
 
 def evaluate_scores(scores: dict[str, float], rubric: Rubric | None = None) -> dict[str, Any]:
@@ -116,7 +112,6 @@ class EvaluationService:
             "content_hash": content_hash,
             "rubric": {
                 "id": self.rubric.identifier,
-                "version": self.rubric.version,
                 "hash": self.rubric.hash,
             },
             **payload,

@@ -1,22 +1,21 @@
 ---
 type: architecture
-revision: 3
 ---
 
 # Architecture — Helix Skill Eval
 
 ## purpose
 
-这是一个本地、单用户的 skill 评估能力：验证 Agent Skills 目录与 SKILL.md 规范，并基于版本化 rubric 形成评价、证据、findings 和 source profile。它只读 source，不管理 runtime link，不承担 skill 安装、部署或生命周期操作。
+这是一个本地、单用户的 skill 评估能力：验证 Agent Skills 目录与 SKILL.md 规范，并基于内置 rubric 形成评价、证据、findings 和 source profile。它只读 source，不管理 runtime link，不承担 skill 安装、部署或生命周期操作。
 
 ## components
 
 - name: Eval
-  responsibility: 验证 skill 结构并形成版本化评价、review findings 与建议。
+  responsibility: 验证 skill 结构并形成评价、review findings 与建议。
   boundary: 不修改 source，不执行 runtime 操作，不替用户做生命周期决定。
   interfaces: validation, assessment and report contract
 - name: Management Core
-  responsibility: 计算版本化评价与 source profile。
+  responsibility: 计算评价与 source profile。
   boundary: 只处理评估输入与结果，不介入外部运行时状态。
   interfaces: evaluation and source-profile contracts
 

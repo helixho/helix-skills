@@ -1,7 +1,7 @@
 ---
 name: helix-skill-eval
 description: >-
-  评估 skill：检查 Agent Skills 目录与 SKILL.md frontmatter 是否合规，并按版本化评分标准记录评分、证据、发现和建议。
+  评估 skill：检查 Agent Skills 目录与 SKILL.md frontmatter 是否合规，并按内置评分标准记录评分、证据、发现和建议。
   用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”。只读源码，不测试运行行为，也不修改 skill 或运行时。
 ---
 
@@ -11,7 +11,7 @@ description: >-
 
 - Routine edits need `validate` and a focused review of the changed behavior;
   do not require a nine-dimension scorecard for every edit.
-- Use the versioned scorecard for an explicitly requested score, comparison,
+- Use the scorecard for an explicitly requested score, comparison,
   or formal audit. The caller supplies the evidence and judgments; `evaluate`
   validates and packages those inputs, computes the content hash from
   `skill_dir`, and computes the mean score. It does not judge the skill or
@@ -43,14 +43,12 @@ top-level fields; known runtime extensions such as Claude Code's
 normalize or edit the assessed skill.
 
 The individual-skill scoring standard is the built-in
-`references/batch-rubric-v1.7.md`. Source Profile uses the separate, built-in
+`references/scorecard-rubric.md`. Source Profile uses the separate, built-in
 `references/source-profile-rubric.md`.
 The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
-Its ID, version, and complete-file hash are recorded automatically. Do not
-accept a caller-supplied rubric or override; a new standard requires a new
-versioned reference file and an explicit entry in the rubric registry
-(`_RUBRIC_REGISTRY` in `scripts/helix_skill_kit/eval.py`).
+Its ID and complete-file hash are recorded automatically. The rubric is built
+in; do not accept a caller-supplied rubric or override.
 
 Pass the skill's source directory as `skill_dir` and file-backed findings as
 `evidence`. This skill assesses source only: it does not test runtime behavior,
@@ -64,7 +62,7 @@ separate operation outside this skill.
 
 - Read skill source directories only; do not write a skill, runtime link, or
   upstream source.
-- Return the rubric ID, version, hash, content snapshot hash, evidence,
+- Return the rubric ID and hash, content snapshot hash, evidence,
   findings, and advisory suggestions for every assessment.
 - A suggestion to Study, link, defer, or consider a source project is not a
   user decision and never authorizes an operation.

@@ -1,6 +1,5 @@
 ---
 type: ontology
-revision: 3
 ---
 
 # Ontology — Helix Skill Eval
@@ -23,7 +22,7 @@ revision: 3
   aliases: skill
 - id: c_assessment
   name: Assessment
-  meaning: 基于版本化 rubric 的评价、评分、证据与 review findings。
+  meaning: 基于内置 rubric 的评价、评分、证据与 review findings。
   examples: individual skill evaluation
   aliases: evaluation
 

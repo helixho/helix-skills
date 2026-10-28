@@ -77,7 +77,8 @@ class EvaluateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             assessment = evaluate(write_skill(tmp))["result"]["assessment"]
         self.assertEqual(assessment["average"], 4.0)
-        self.assertEqual(assessment["rubric"]["version"], "1.7.0")
+        self.assertEqual(assessment["rubric"]["id"], "helix-skill-scorecard")
+        self.assertNotIn("version", assessment["rubric"])
         self.assertNotIn("runtime_status", assessment)
 
     def test_content_hash_follows_files(self):

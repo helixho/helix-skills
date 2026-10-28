@@ -1,7 +1,5 @@
 ---
 rubric_id: helix-skill-scorecard
-version: 1.7.0
-status: active
 ---
 
 # Skill Scorecard Rubric
@@ -100,10 +98,7 @@ views, not lifecycle instructions. Source-project-level management metadata
 (source availability, duplicate routing, or a project retirement review) is
 maintained separately and does not modify the source artifact.
 
-## Versioning and comparability
+## Comparability
 
-- Every scored observation records this `rubric_id`, `version`, and rubric file
-  hash.
-- Scores are comparable only when all three match.
-- Imported historical reports retain their original rubric identifiers and are
-  evidence references, not converted scores.
+Every scored observation records this `rubric_id` and the rubric file hash.
+Scores are comparable only when both match.

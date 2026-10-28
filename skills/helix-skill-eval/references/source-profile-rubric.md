@@ -1,7 +1,5 @@
 ---
 rubric_id: helix-source-profile
-version: 1.0.0
-status: active
 ---
 
 # Source Profile Rubric

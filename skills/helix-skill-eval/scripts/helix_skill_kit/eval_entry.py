@@ -59,11 +59,11 @@ def handle(request: dict[str, Any]) -> JsonResult:
             commands=["describe", "validate", "evaluate", "evaluate_many", "profile_source"],
             writes_external_state=False,
             persistence="none",
-            rubric={"id": rubric.identifier, "version": rubric.version, "hash": rubric.hash},
-            source_profile_rubric={"id": source_rubric.identifier, "version": source_rubric.version, "hash": source_rubric.source_hash},
+            rubric={"id": rubric.identifier, "hash": rubric.hash},
+            source_profile_rubric={"id": source_rubric.identifier, "hash": source_rubric.source_hash},
         )
     try:
-        rubric_fields = {"rubric", "rubric_id", "rubric_version", "rubric_hash"}
+        rubric_fields = {"rubric", "rubric_id", "rubric_hash"}
         if supplied := sorted(rubric_fields.intersection(request)):
             raise ContractError(f"rubric is built in; caller-supplied fields are not accepted: {', '.join(supplied)}")
         if command == "validate":
