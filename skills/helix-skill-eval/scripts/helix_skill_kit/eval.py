@@ -44,12 +44,11 @@ class Rubric:
 
 _RUBRIC_ROOT = Path(__file__).resolve().parents[2] / "references"
 _RUBRIC_REGISTRY = {
-    ("helix-skill-scorecard", "1.6.0"): _RUBRIC_ROOT / "batch-rubric-v1.6.md",
+    ("helix-skill-scorecard", "1.7.0"): _RUBRIC_ROOT / "batch-rubric-v1.7.md",
 }
-_RUNTIME_STATUSES = frozenset({"not_checked", "passed", "failed"})
 
 
-def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.6.0") -> Rubric:
+def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.7.0") -> Rubric:
     path = _RUBRIC_REGISTRY.get((identifier, version))
     if path is None:
         raise ContractError("rubric id/version is not registered")
@@ -93,29 +92,17 @@ class EvaluationService:
         identity: SkillIdentity,
         content_hash: str,
         scores: dict[str, float],
-        authoring_evidence: list[str],
-        runtime_evidence: list[str],
-        runtime_status: str,
+        evidence: list[str],
         findings: list[str],
         suggestions: list[str],
         assessed_at: str | None = None,
     ) -> dict[str, Any]:
-        if runtime_status not in _RUNTIME_STATUSES:
-            raise ContractError("runtime_status must be not_checked, passed, or failed")
-        if runtime_status != "not_checked" and not runtime_evidence:
-            raise ContractError("passed or failed runtime_status requires runtime_evidence")
-        if runtime_status == "not_checked" and runtime_evidence:
-            raise ContractError("runtime_evidence requires passed or failed runtime_status")
         assessment = evaluate_scores(scores, self.rubric)
         timestamp = assessed_at or datetime.now(UTC).isoformat(timespec="seconds")
         assessment_id = str(uuid.uuid4())
         payload = {
             **assessment,
-            "evidence": {
-                "authoring": authoring_evidence,
-                "runtime": runtime_evidence,
-            },
-            "runtime_status": runtime_status,
+            "evidence": evidence,
             "findings": findings,
             "suggestions": suggestions,
         }

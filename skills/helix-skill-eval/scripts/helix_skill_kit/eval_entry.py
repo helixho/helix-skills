@@ -9,7 +9,7 @@ from typing import Any
 from .contracts import ContractError, JsonResult, json_error, json_success, read_json_request
 from .conformance import validate_skill_directory
 from .eval import EvaluationService, load_rubric
-from .identity import make_identity
+from .identity import content_hash, make_identity
 from .source_profile import SourceProfileService, load_source_profile_rubric
 
 
@@ -28,9 +28,11 @@ def _text_list(value: Any, name: str) -> list[str]:
 def _item(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ContractError("every item must be an object")
-    content_hash = value.get("content_hash")
-    if not isinstance(content_hash, str) or not content_hash.strip():
-        raise ContractError("content_hash is required")
+    if rejected := sorted({"content_hash", "runtime_status", "runtime_evidence", "authoring_evidence"}.intersection(value)):
+        raise ContractError(
+            f"not accepted: {', '.join(rejected)}; the content hash is computed from skill_dir and runtime behavior is not assessed"
+        )
+    skill_dir = Path(_required_text(value.get("skill_dir"), "skill_dir"))
     scores = value.get("scores")
     if not isinstance(scores, dict):
         raise ContractError("scores must be an object")
@@ -39,14 +41,9 @@ def _item(value: Any) -> dict[str, Any]:
             _required_text(value.get("source_project"), "source_project"),
             _required_text(value.get("skill_unit"), "skill_unit"),
         ),
-        "content_hash": content_hash,
+        "content_hash": content_hash(skill_dir),
         "scores": scores,
-        "authoring_evidence": _text_list(
-            value.get("authoring_evidence", value.get("evidence", [])),
-            "authoring_evidence",
-        ),
-        "runtime_evidence": _text_list(value.get("runtime_evidence", []), "runtime_evidence"),
-        "runtime_status": value.get("runtime_status", "not_checked"),
+        "evidence": _text_list(value.get("evidence", []), "evidence"),
         "findings": _text_list(value.get("findings", []), "findings"),
         "suggestions": _text_list(value.get("suggestions", []), "suggestions"),
     }

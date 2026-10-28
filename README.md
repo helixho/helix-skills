@@ -76,6 +76,12 @@ The delegation reporter is tested with synthetic traces; tests never read your s
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
 ```
 
+The Skill Eval entrypoint contract is tested on temporary fixture skills and needs a Python environment with PyYAML:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-eval
+```
+
 ## License
 
 Licensed under [MIT](LICENSE). Use, modification, distribution, and commercial use are permitted with the copyright and license notice retained.

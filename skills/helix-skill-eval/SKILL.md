@@ -1,10 +1,8 @@
 ---
 name: helix-skill-eval
 description: >-
-  Validate Agent Skills directory and SKILL.md frontmatter conformance, then
-  evaluate one or more skills with a versioned rubric and record evidence,
-  findings, overlap observations, and advisory suggestions. Use for skill
-  conformance checks and scorecards; it is read-only to skills and runtimes.
+  评估 skill：检查 Agent Skills 目录与 SKILL.md frontmatter 是否合规，并按版本化评分标准记录评分、证据、发现和建议。
+  用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”。只读源码，不测试运行行为，也不修改 skill 或运行时。
 ---
 
 # Helix Skill Eval
@@ -15,24 +13,25 @@ description: >-
   do not require a nine-dimension scorecard for every edit.
 - Use the versioned scorecard for an explicitly requested score, comparison,
   or formal audit. The caller supplies the evidence and judgments; `evaluate`
-  validates and packages those inputs and computes their mean. It does not
-  independently inspect the skill or establish that it works.
+  validates and packages those inputs, computes the content hash from
+  `skill_dir`, and computes the mean score. It does not judge the skill or
+  establish that it works.
 - Source Profile is only for reviewing an upstream repository as a whole.
 
 ## Formal assessment
 
 Use this skill to evaluate a skill, skill set, or upstream source project.
 Produce comparable evidence, not automatic lifecycle actions. Keep one Skill
-Scorecard per assessed content snapshot, with separate authoring and runtime
-evidence inside that record. Do not split them into separate evaluation skills.
+Scorecard per assessed content snapshot.
 A Source Profile evaluates the upstream project as an interdependent system;
 it does not overwrite the Skill Scorecard.
 
 Source Profile is available only to a source acquired as a Git upstream. Local
-packs and application-origin bundles have no repository identity to profile: retain their per-skill evaluation and provenance
-record only.
+packs and application-origin bundles have no repository identity to profile:
+retain their per-skill evaluation and provenance record only.
 
-Run the local entrypoint with `python3 scripts/run.py`.
+Run the local entrypoint with `python3 scripts/run.py` (Python 3.11+ with
+PyYAML from `scripts/requirements.txt`).
 It accepts one JSON request on stdin and returns JSON on stdout. It is stateless
 and never writes SQLite or runtime state.
 
@@ -44,7 +43,7 @@ top-level fields; known runtime extensions such as Claude Code's
 normalize or edit the assessed skill.
 
 The individual-skill scoring standard is the built-in
-`references/batch-rubric-v1.6.md`. Source Profile uses the separate, built-in
+`references/batch-rubric-v1.7.md`. Source Profile uses the separate, built-in
 `references/source-profile-rubric.md`.
 The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
@@ -53,11 +52,9 @@ accept a caller-supplied rubric or override; a new standard requires a new
 versioned reference file and an explicit entry in the rubric registry
 (`_RUBRIC_REGISTRY` in `scripts/helix_skill_kit/eval.py`).
 
-For every scorecard, set `runtime_status` to `not_checked`, `passed`, or
-`failed`. Put source/conformance evidence in `authoring_evidence`. Use
-`runtime_evidence` only for a fresh-session behavior check that names the
-runtime, scenario, selected skill, and observed invocation path. A symlink,
-unit test, or current-session source read is not runtime evidence.
+Pass the skill's source directory as `skill_dir` and file-backed findings as
+`evidence`. This skill assesses source only: it does not test runtime behavior,
+and no scorecard claims runtime verification.
 
 Return the scorecard to the caller. This skill does not persist assessments: it
 creates no note, record, or assessment database. Storing an assessment is a
@@ -65,10 +62,10 @@ separate operation outside this skill.
 
 ## Boundary
 
-- Read skill source directories and runtime state only; do not write a skill,
-  runtime link, or upstream source.
-- Return the rubric ID, version, hash, content snapshot hash, authoring/runtime
-  evidence, findings, and advisory suggestions for every assessment.
+- Read skill source directories only; do not write a skill, runtime link, or
+  upstream source.
+- Return the rubric ID, version, hash, content snapshot hash, evidence,
+  findings, and advisory suggestions for every assessment.
 - A suggestion to Study, link, defer, or consider a source project is not a
   user decision and never authorizes an operation.
 - A `whole-project-preserve` Source Profile means individual low scores are

@@ -1,6 +1,6 @@
 ---
 rubric_id: helix-skill-scorecard
-version: 1.6.0
+version: 1.7.0
 status: active
 ---
 
@@ -29,7 +29,7 @@ or patch an upstream skill during assessment.
 ## Dimensions
 
 Score each dimension from 1 to 5 and attach concise file-backed evidence where
-available. A score is not evidence of runtime behavior.
+available.
 
 | Dimension | 1 | 3 | 5 |
 |---|---|---|---|
@@ -41,21 +41,13 @@ available. A score is not evidence of runtime behavior.
 | Trust boundary | Unexplained side effects or opaque authority | Side effects and dependencies named | Authority, external actions, and limits explicit |
 | Trigger quality | Trigger is missing, exclusion-only, or written for a different audience | Positive trigger exists but needs interpretation | Positive, concrete use scenarios match the intended user's working language |
 | Actionability | Trigger/output cannot be used reliably | Usable with some interpretation | Concrete trigger, procedure, and handoff/output |
-| Evidence quality | Assertion or metadata only | SKILL.md and selected support read | File-backed evidence plus relevant behavior check |
+| Evidence quality | Assertion or metadata only | SKILL.md and selected support read | File-backed evidence across the entry, references, and scripts, with deterministic checks run |
 
-## Evidence phases
+## Evidence
 
-Keep one scorecard with two evidence sections:
-
-- `authoring`: source content, conformance, dependencies, and deterministic
-  checks.
-- `runtime`: fresh-session behavior naming the runtime, scenario, selected
-  skill, and observed invocation path.
-
-Set `runtime_status` to `not_checked`, `passed`, or `failed`. `not_checked`
-does not invalidate an authoring assessment, but the result must not be called
-runtime-verified. A symlink, unit test, current-session source read, or the
-score itself is not runtime evidence.
+Record file-backed evidence: source content, conformance, dependencies, and
+deterministic checks run against the source. This rubric assesses source only;
+it does not test runtime behavior, and a score is never evidence of it.
 
 ## Portability review rules
 
@@ -96,7 +88,7 @@ boundary; they add no dimension.
   item list is written to a review file and apply is limited to the frozen
   reviewed plan.
 
-`overall_score` is the arithmetic mean of the nine dimension scores, rounded
+`average` is the arithmetic mean of the nine dimension scores, rounded
 to one decimal place. The formula is deliberately equal-weighted: a reviewer
 may explain a trade-off in evidence, but may not silently change weights per
 skill or per run.

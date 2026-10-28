@@ -68,12 +68,18 @@ printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .ven
 
 结果中的 `conformant` 表示结构是否合规。完整评价的判断与证据由调用者提供，脚本校验输入并汇总结果；结构通过或评分本身都不能证明实际运行效果。完整流程见 [helix-skill-eval](skills/helix-skill-eval/SKILL.md)。
 
-## 运行业为测试
+## 运行行为测试
 
 Delegation 用量统计使用合成轨迹测试，不读取你的真实会话：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
+```
+
+Skill Eval 的入口契约在临时样本 skill 上测试，需要已安装 PyYAML 的 Python 环境：
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-eval
 ```
 
 ## 许可证
