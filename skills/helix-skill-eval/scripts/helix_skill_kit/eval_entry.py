@@ -68,7 +68,10 @@ def handle(request: dict[str, Any]) -> JsonResult:
             raise ContractError(f"rubric is built in; caller-supplied fields are not accepted: {', '.join(supplied)}")
         if command == "validate":
             skill_dir = Path(_required_text(request.get("skill_dir"), "skill_dir"))
-            return json_success(**validate_skill_directory(skill_dir))
+            public = request.get("public", False)
+            if not isinstance(public, bool):
+                raise ContractError("public must be a boolean")
+            return json_success(**validate_skill_directory(skill_dir, public=public))
         if command == "evaluate":
             item = _item(request)
             return json_success(assessment=EvaluationService().evaluate(**item))

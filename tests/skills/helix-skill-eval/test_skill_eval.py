@@ -71,6 +71,16 @@ class ValidateTests(unittest.TestCase):
         self.assertEqual(len(ok["result"]["warnings"]), 1)
         self.assertIn("disable-model-invocation must be a bool", bad["result"]["errors"])
 
+    def test_public_scan_flags_personal_home_paths_only(self):
+        body = "Run /Users/alice/tools/x.\nSee /Users/example/demo and /home/user/demo.\nC:\\Users\\bob\\x\n"
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp, body=body)
+            public = call({"command": "validate", "skill_dir": str(skill), "public": True})["result"]
+            private = call({"command": "validate", "skill_dir": str(skill)})["result"]
+        self.assertEqual(len(public["isolation_findings"]), 2)
+        self.assertIn("/Users/alice", public["isolation_findings"][0])
+        self.assertNotIn("isolation_findings", private)
+
 
 class EvaluateTests(unittest.TestCase):
     def test_average_and_rubric(self):

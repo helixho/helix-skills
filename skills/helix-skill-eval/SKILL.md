@@ -1,8 +1,9 @@
 ---
 name: helix-skill-eval
 description: >-
-  评估 skill：检查 Agent Skills 目录与 SKILL.md frontmatter 是否合规，并按内置评分标准记录评分、证据、发现和建议。
-  用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”。只读源码，不测试运行行为，也不修改 skill 或运行时。
+  评估 skill 以找出改进点：检查目录与 SKILL.md frontmatter 是否合规，按内置评分标准和评估指南记录评分、证据、发现和改进建议，
+  也评估外部 skill 有哪些值得借鉴到自己的 skill。用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”“这个外部 skill 有什么值得借鉴”。
+  只读源码，不测试运行行为，也不修改 skill 或运行时。
 ---
 
 # Helix Skill Eval
@@ -16,6 +17,9 @@ description: >-
   validates and packages those inputs, computes the content hash from
   `skill_dir`, and computes the mean score. It does not judge the skill or
   establish that it works.
+- To improve one of the user's own skills from an external skill, follow
+  "Reviewing an external skill as a reference" in `references/review-guide.md`;
+  no scorecard is required.
 - Source Profile is only for reviewing an upstream repository as a whole.
 
 ## Formal assessment
@@ -39,8 +43,10 @@ Before scoring a skill, run the `validate` command with its source directory as
 `skill_dir`. This deterministic precheck validates the current Agent Skills
 directory and frontmatter contract, including the closed set of allowed
 top-level fields; known runtime extensions such as Claude Code's
-`disable-model-invocation` pass with a warning. Keep every reported conformance error as a finding; do not
-normalize or edit the assessed skill.
+`disable-model-invocation` pass with a warning. For a published skill, also
+pass `"public": true` to scan for personal home paths. Keep every reported
+conformance error and isolation finding as a finding; do not normalize or edit
+the assessed skill.
 
 The individual-skill scoring standard is the built-in
 `references/scorecard-rubric.md`. Source Profile uses the separate, built-in
@@ -48,7 +54,9 @@ The individual-skill scoring standard is the built-in
 The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
 Its ID and complete-file hash are recorded automatically. The rubric is built
-in; do not accept a caller-supplied rubric or override.
+in; do not accept a caller-supplied rubric or override. Judge each dimension
+with the checks in `references/review-guide.md`, label evidence as it
+describes, and end with prioritized improvements to the assessed skill.
 
 Pass the skill's source directory as `skill_dir` and file-backed findings as
 `evidence`. This skill assesses source only: it does not test runtime behavior,

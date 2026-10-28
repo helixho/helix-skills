@@ -41,9 +41,24 @@ def _parse_skill_markdown(path: Path) -> tuple[dict[str, Any] | None, str, list[
     if not isinstance(frontmatter, dict):
         return None, "", ["SKILL.md frontmatter must be a YAML mapping"]
     return frontmatter, text[end + 5 :], []
+# A personal home directory, except the documented placeholders.
+_HOME_PATH_RE = re.compile(r"(?:/Users/(?!example/)|/home/(?!user/)|[A-Za-z]:\\Users\\(?!example\\))[A-Za-z0-9._-]+")
 
 
-def validate_skill_directory(skill_dir: Path) -> dict[str, Any]:
+def _isolation_findings(root: Path) -> list[str]:
+    findings = []
+    for path in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except (UnicodeDecodeError, OSError):
+            continue
+        for number, line in enumerate(lines, 1):
+            if match := _HOME_PATH_RE.search(line):
+                findings.append(f"{path.relative_to(root).as_posix()}:{number}: personal home path {match.group(0)}")
+    return findings
+
+
+def validate_skill_directory(skill_dir: Path, public: bool = False) -> dict[str, Any]:
     """Return deterministic Agent Skills conformance facts without writing files."""
     root = skill_dir.expanduser().resolve()
     errors: list[str] = []
@@ -110,10 +125,13 @@ def validate_skill_directory(skill_dir: Path) -> dict[str, Any]:
         if len(skill_md.read_text(encoding="utf-8").splitlines()) > 500:
             warnings.append("SKILL.md exceeds the recommended 500-line limit")
 
-    return {
+    result = {
         "skill_dir": str(root),
         "conformant": not errors,
         "errors": errors,
         "warnings": warnings,
         "specification": "https://agentskills.io/specification",
     }
+    if public:
+        result["isolation_findings"] = _isolation_findings(root) if root.is_dir() else []
+    return result

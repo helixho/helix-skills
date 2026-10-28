@@ -27,7 +27,7 @@ or patch an upstream skill during assessment.
 ## Dimensions
 
 Score each dimension from 1 to 5 and attach concise file-backed evidence where
-available.
+available. Judge each dimension with its checks in `review-guide.md`.
 
 | Dimension | 1 | 3 | 5 |
 |---|---|---|---|
