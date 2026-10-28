@@ -13,9 +13,9 @@ For a main agent running in Claude Code. The shared rules are in the skill entry
 
 The three custom profiles are in `assets/claude-agents/`. Install them by linking each file into `~/.claude/agents/`. Claude Code watches that directory and picks up changes within seconds; restart only when the directory itself was created during the current session. If a custom type is missing, use `general-purpose` with the same model and effort passed at spawn time.
 
-A spawn-time `model` or `effort` overrides the profile, the opposite of Codex. Pass one only to change a role deliberately, for example Opus for a complex `Executor` slice. Request only models available to the current account.
+A spawn-time `model` or `effort` overrides the profile. Pass one only to change a role deliberately, for example Opus for a complex `Executor` slice. Request only models available to the current account.
 
-The profiles remove the `Agent` tool, so a child cannot spawn further subagents. `Reviewer` can still write through Bash, so leaving the work unchanged remains an instruction boundary. It returns findings inline; the main agent saves a lasting report when one helps. For a high-risk result, a review by another model family through `codex exec` ([CLI executors](cli-executors.md)) gives a more independent view.
+The profiles remove the `Agent` tool, so a child cannot spawn further subagents. `Reviewer` can still write through Bash, so leaving the work unchanged remains an instruction boundary. It returns findings inline; the main agent saves a lasting report when one helps. For a high-risk result, when the Codex CLI is installed and signed in, a review by another model family through `codex exec` ([CLI executors](cli-executors.md)) gives a more independent view.
 
 ## Context and isolation
 
