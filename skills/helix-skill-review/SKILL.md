@@ -1,7 +1,7 @@
 ---
 name: helix-skill-review
 description: >-
-  评估 skill 以找出改进点：检查目录与 SKILL.md frontmatter 是否合规，按内置评分标准和评估指南记录评分、证据、发现和改进建议，
+  评估 skill 以找出改进点：按批判性思维、MECE、奥卡姆剃刀、独立性原则以及 Agent Skills 规范和渐进式披露检查，按内置评分标准记录评分、证据、发现和改进建议，
   也评估外部 skill 有哪些值得借鉴到自己的 skill。用于“评估这个 skill”“给 skill 打分”“检查 skill 结构”“这个外部 skill 有什么值得借鉴”。
   只读源码，不测试运行行为，也不修改 skill 或运行时。
 ---

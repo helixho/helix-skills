@@ -6,6 +6,28 @@ scorecard dimension; record what they find as evidence, findings, and
 suggestions. Logical conflicts inside
 the instructions are reviewed with `helix-logic-review`.
 
+## Principles
+
+Every check in this guide applies one of these principles; name the principle a
+finding violates.
+
+- **Critical thinking**: treat every claim in the skill, and every judgment of
+  your own, as needing support. Establish positioning from evidence, label
+  evidence, look for counter-evidence, and hold your suggestions to the same
+  standard. The logic of the instructions themselves goes to
+  `helix-logic-review`.
+- **MECE**: inside the skill, sections, files, uses, and steps do not overlap
+  and together cover every case the job requires; across skills, each
+  responsibility and rule has one owner. Applied in Positioning (boundary,
+  capability gaps, rule placement) and Uniqueness.
+- **Occam's razor**: no file, section, use, rule, or concept without necessity;
+  the fewest mechanisms that do the job; instructions the model follows by
+  default are removed. Applied in Maintainability.
+- **Independence**: the skill works as a standalone package. Applied in
+  Independence.
+- **Agent Skills specification** and **progressive disclosure**: applied in
+  Specification and progressive disclosure.
+
 ## Evidence labels
 
 Label every finding by what supports it:
@@ -56,10 +78,7 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 **Structure maturity**
 
-- `SKILL.md` carries the stable protocol: entrypoint, routing, boundaries,
-  order of operations, and non-goals.
-- Low-frequency detail sits in a support file, reached by a pointer that says
-  when to read it.
+- Apply Specification and progressive disclosure below.
 - Files are split by durable responsibility: one workflow justifies one entry
   script, one stable topic one reference. Many thin files with unclear
   ownership are a finding.
@@ -117,6 +136,28 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 - Judged by the labels above and how many of the files `validate` lists the
   evidence covers.
+
+## Specification and progressive disclosure
+
+From the Agent Skills specification (agentskills.io/specification):
+
+- **Metadata** (`name` and `description`, about 100 tokens) is loaded for every
+  skill at startup. The description says what the skill does and when to use
+  it, with the keywords that identify its tasks, and nothing else.
+- **Instructions** (the `SKILL.md` body, under 5000 tokens and 500 lines) are
+  loaded on activation. They hold the stable protocol only: entrypoint,
+  routing, boundaries, order of operations, and non-goals.
+- **Resources** (`scripts/`, `references/`, `assets/`) are loaded on demand.
+  Each is reached by a pointer that says when to read it. Reference files stay
+  focused; references are one level deep from `SKILL.md`, with no chain of
+  references pointing to further references.
+- Scripts are self-contained or document their dependencies, give helpful
+  error messages, and handle edge cases. Assets hold templates, images, and
+  data only.
+
+`validate` checks the frontmatter, the name, the description length, the body,
+the 500-line limit, and that relative links resolve. The rest is review
+judgment.
 
 ## Independence
 

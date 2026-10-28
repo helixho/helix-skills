@@ -63,6 +63,17 @@ class ValidateTests(unittest.TestCase):
         self.assertFalse(result["conformant"])
         self.assertIn("unsupported top-level frontmatter fields: foo", result["errors"])
 
+    def test_broken_relative_link_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp, body="See [guide](references/guide.md) and [site](https://example.com).\n")
+            broken = call({"command": "validate", "skill_dir": str(skill)})["result"]
+            (skill / "references").mkdir()
+            (skill / "references/guide.md").write_text("Guide.\n", encoding="utf-8")
+            fixed = call({"command": "validate", "skill_dir": str(skill)})["result"]
+        self.assertFalse(broken["conformant"])
+        self.assertIn("broken link SKILL.md:5: references/guide.md", broken["errors"])
+        self.assertTrue(fixed["conformant"])
+
     def test_runtime_extension_warns_and_is_type_checked(self):
         with tempfile.TemporaryDirectory() as tmp:
             ok = call({"command": "validate", "skill_dir": str(write_skill(tmp, "disable-model-invocation: true\n"))})

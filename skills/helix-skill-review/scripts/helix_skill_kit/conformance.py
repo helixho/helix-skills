@@ -53,6 +53,24 @@ def _skill_files(root: Path) -> list[str]:
     )
 
 
+_LINK_RE = re.compile(r"\]\(([^)\s#]+)(?:#[^)]*)?\)")
+
+
+def _broken_links(root: Path) -> list[str]:
+    """Relative Markdown links that do not resolve to a file or directory."""
+    broken = []
+    for path in sorted(root.rglob("*.md")):
+        if "__pycache__" in path.parts:
+            continue
+        for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            for target in _LINK_RE.findall(line):
+                if "://" in target or target.startswith("mailto:"):
+                    continue
+                if not (path.parent / target).exists():
+                    broken.append(f"broken link {path.relative_to(root).as_posix()}:{number}: {target}")
+    return broken
+
+
 def _isolation_findings(root: Path) -> list[str]:
     findings = []
     for path in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
@@ -130,6 +148,7 @@ def validate_skill_directory(skill_dir: Path, public: bool = False) -> dict[str,
 
         if not body.strip():
             errors.append("SKILL.md must contain a non-empty Markdown body")
+        errors.extend(_broken_links(root))
         if len(skill_md.read_text(encoding="utf-8").splitlines()) > 500:
             warnings.append("SKILL.md exceeds the recommended 500-line limit")
 
