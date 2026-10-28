@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Reusable Agent Skills for clarifying intent, delegating work, handing off sessions, defining a brand, and evaluating skills.
+Reusable Agent Skills for clarifying intent, delegating work, handing off sessions, defining a brand, logically reviewing rules, and evaluating skills.
 
 Each skill is a self-contained directory with a `SKILL.md` entry point and any templates, references, or scripts it needs. Skill instructions are primarily in Chinese; some references and code are in English.
 
@@ -14,9 +14,10 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 | [helix-delegation](skills/helix-delegation/SKILL.md) | Split substantial work, brief agents, and verify delegated results across Codex and Claude Code. | “Delegate independent parts of this task and review the results.” |
 | [helix-handoff](skills/helix-handoff/SKILL.md) | Produce a reviewable session handoff that works across tools. | “Prepare a handoff so the next session can finish verification.” |
 | [helix-ip](skills/helix-ip/SKILL.md) | Define brand facts, positioning, messaging, and visual direction; review materials against that definition. | “Turn these materials into a brand IP.md.” |
+| [helix-rule-review](skills/helix-rule-review/SKILL.md) | Logically review rules, skills, or drafts for contradictions, gaps, precedence, terms, redundancy, and broken references. | “Use rule review to check whether these rules contradict each other.” |
 | [helix-skill-eval](skills/helix-skill-eval/SKILL.md) | Check skill package structure and record evaluations against a versioned rubric with evidence. | “Check this skill's structure; use the full assessment only if a score is needed.” |
 
-`helix-clarify`, `helix-handoff`, and `helix-ip` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
+`helix-clarify`, `helix-handoff`, `helix-ip`, and `helix-rule-review` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
 
 ## Get started
 
@@ -38,7 +39,7 @@ ln -s "$PWD/skills/helix-clarify" "$HOME/.agents/skills/helix-clarify"
 
 If the target name already exists, inspect the existing installation and choose which source to use. In a new session, invoke the skill explicitly with `$helix-clarify`.
 
-In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff` and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff` and `$helix-skill-eval`. Follow the skill discovery and invocation conventions of other runtimes.
+In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff`, `helix-rule-review`, and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff`, `$helix-rule-review`, and `$helix-skill-eval`. `helix-rule-review` is also explicit-only in Claude Code (`/helix-rule-review`). Follow the skill discovery and invocation conventions of other runtimes.
 
 You can also ask an agent to read a selected `SKILL.md` and follow it for the current task.
 
