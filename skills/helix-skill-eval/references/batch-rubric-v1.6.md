@@ -1,6 +1,6 @@
 ---
 rubric_id: helix-skill-scorecard
-version: 1.5.0
+version: 1.6.0
 status: active
 ---
 
@@ -33,7 +33,7 @@ available. A score is not evidence of runtime behavior.
 
 | Dimension | 1 | 3 | 5 |
 |---|---|---|---|
-| Value and fit | No credible use in Helix workflows | Situational personal use | Repeated, high-value Helix workflow |
+| Value and fit | No credible use in the user's workflows | Situational personal use | Repeated, high-value workflow for the user |
 | Structure maturity | Thin or incomplete workflow | Clear workflow with useful support | Clear, testable, progressively disclosed capability |
 | Uniqueness | Duplicates an active capability | Partial overlap with a distinguishable niche | Distinct responsibility and trigger boundary |
 | Maintainability | Fragile, stale, or opaque dependency | Ordinary upkeep | Small, explicit, portable maintenance surface |

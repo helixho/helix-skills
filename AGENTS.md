@@ -14,5 +14,8 @@ This public repository is the canonical source for the skills under `skills/`.
   invocation policies unless the requested change requires updating them.
 - Keep machine-specific configuration, credentials, sessions, logs and private
   working material outside this repository.
+- Keep every published skill usable by anyone: no reference to or dependency on
+  the owner's private tools, knowledge base, installed applications or
+  workflows. Integrations with those belong in the owner's private repository.
 - Include only resources needed by the published skills. Do not copy private
   repository history, runtime homes or third-party skill collections here.

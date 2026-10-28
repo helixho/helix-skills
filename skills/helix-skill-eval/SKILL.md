@@ -29,8 +29,7 @@ A Source Profile evaluates the upstream project as an interdependent system;
 it does not overwrite the Skill Scorecard.
 
 Source Profile is available only to a source acquired as a Git upstream. Local
-packs and application-origin bundles have no
-repository identity to profile: retain their per-skill evaluation and provenance
+packs and application-origin bundles have no repository identity to profile: retain their per-skill evaluation and provenance
 record only.
 
 Run the local entrypoint with `python3 scripts/run.py`.
@@ -45,7 +44,7 @@ top-level fields; known runtime extensions such as Claude Code's
 normalize or edit the assessed skill.
 
 The individual-skill scoring standard is the built-in
-`references/batch-rubric-v1.5.md`. Source Profile uses the separate, built-in
+`references/batch-rubric-v1.6.md`. Source Profile uses the separate, built-in
 `references/source-profile-rubric.md`.
 The capability's design is in `references/architecture.md` and its concepts in
 `references/ontology.md`; read them only when changing this skill.
@@ -60,11 +59,9 @@ For every scorecard, set `runtime_status` to `not_checked`, `passed`, or
 runtime, scenario, selected skill, and observed invocation path. A symlink,
 unit test, or current-session source read is not runtime evidence.
 
-Return the scorecard to the caller. Do not create or update a registry, knowledge-base
-note, or assessment database. Helix-owned source skills remain source-only and
-must never be registered in a knowledge base by this skill. Recording an explicitly
-requested external/upstream assessment is a separate knowledge-base operation outside
-Eval.
+Return the scorecard to the caller. This skill does not persist assessments: it
+creates no note, record, or assessment database. Storing an assessment is a
+separate operation outside this skill.
 
 ## Boundary
 
@@ -77,5 +74,5 @@ Eval.
 - A `whole-project-preserve` Source Profile means individual low scores are
   local diagnostics only; they are never a cleanup recommendation for that
   source project or its entries.
-- Return external pattern suggestions to the current task; approved skill edits
-  use `skill-creator`. Runtime link changes are outside this skill and need no dedicated routing skill.
+- Return external pattern suggestions to the current task. Approved skill edits
+  and runtime link changes are outside this skill.

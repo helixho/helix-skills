@@ -44,12 +44,12 @@ class Rubric:
 
 _RUBRIC_ROOT = Path(__file__).resolve().parents[2] / "references"
 _RUBRIC_REGISTRY = {
-    ("helix-skill-scorecard", "1.5.0"): _RUBRIC_ROOT / "batch-rubric-v1.5.md",
+    ("helix-skill-scorecard", "1.6.0"): _RUBRIC_ROOT / "batch-rubric-v1.6.md",
 }
 _RUNTIME_STATUSES = frozenset({"not_checked", "passed", "failed"})
 
 
-def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.5.0") -> Rubric:
+def load_rubric(identifier: str = "helix-skill-scorecard", version: str = "1.6.0") -> Rubric:
     path = _RUBRIC_REGISTRY.get((identifier, version))
     if path is None:
         raise ContractError("rubric id/version is not registered")
