@@ -8,74 +8,48 @@ description: >-
 
 # Helix Skill Review
 
-## Choose the depth
+Two uses, both ending in concrete improvements to a skill the user owns.
 
-- Routine edits need `validate` and a focused review of the changed behavior;
-  do not require a nine-dimension scorecard for every edit.
-- Use the scorecard for an explicitly requested score, comparison,
-  or formal audit. The caller supplies the evidence and judgments; `evaluate`
-  validates and packages those inputs, computes the content hash from
-  `skill_dir`, and computes the mean score. It does not judge the skill or
-  establish that it works.
-- To improve one of the user's own skills from an external skill, follow
-  "Reviewing an external skill as a reference" in `references/review-guide.md`;
-  no scorecard is required.
-- Source Profile is only for reviewing an upstream repository as a whole.
+## Assess a skill
 
-## Formal assessment
+The default for any request to assess, check, or score a skill.
 
-Use this skill to evaluate a skill, skill set, or upstream source project.
-Produce comparable evidence, not automatic lifecycle actions. Keep one Skill
-Scorecard per assessed content snapshot.
-A Source Profile evaluates the upstream project as an interdependent system;
-it does not overwrite the Skill Scorecard.
+1. Run `validate` with the skill's source directory as `skill_dir`; for a
+   published skill add `"public": true` to scan for personal home paths. Every
+   conformance error and isolation finding is a finding.
+2. Apply `references/review-guide.md`: settle Positioning first, then judge each
+   dimension with its checks, labeling every piece of evidence as the guide
+   describes.
+3. Score the nine dimensions of `references/scorecard-rubric.md` and submit them
+   with `evaluate`, passing `skill_dir`, the labeled `evidence`, `findings`, and
+   `suggestions`. It computes the content hash and the average.
+4. Report prioritized improvements tied to findings, with the scores as a
+   summary.
 
-Source Profile is available only to a source acquired as a Git upstream. Local
-packs and application-origin bundles have no repository identity to profile:
-retain their per-skill evaluation and provenance record only.
+For several skills, assess each one, then rank the improvements across them.
 
-Run the local entrypoint with `python3 scripts/run.py` (Python 3.11+ with
-PyYAML from `scripts/requirements.txt`).
-It accepts one JSON request on stdin and returns JSON on stdout. It is stateless
-and never writes SQLite or runtime state.
+## Borrow from an external skill
 
-Before scoring a skill, run the `validate` command with its source directory as
-`skill_dir`. This deterministic precheck validates the current Agent Skills
-directory and frontmatter contract, including the closed set of allowed
-top-level fields; known runtime extensions such as Claude Code's
-`disable-model-invocation` pass with a warning. For a published skill, also
-pass `"public": true` to scan for personal home paths. Keep every reported
-conformance error and isolation finding as a finding; do not normalize or edit
-the assessed skill.
+To improve one of the user's own skills from an external one, follow
+"Reviewing an external skill as a reference" in `references/review-guide.md`.
+No scorecard is needed.
 
-The individual-skill scoring standard is the built-in
-`references/scorecard-rubric.md`. Source Profile uses the separate, built-in
-`references/source-profile-rubric.md`.
-The capability's design is in `references/architecture.md` and its concepts in
+## Script
+
+Run `python3 scripts/run.py` (Python 3.11+ with PyYAML from
+`scripts/requirements.txt`). It reads one JSON request on stdin, writes one JSON
+result on stdout, and keeps no state. Commands: `describe`, `validate`,
+`evaluate`. The rubric is built in and its ID and file hash are recorded with
+every scorecard; a caller cannot supply or override it.
+
+The design is in `references/architecture.md` and the concepts in
 `references/ontology.md`; read them only when changing this skill.
-Its ID and complete-file hash are recorded automatically. The rubric is built
-in; do not accept a caller-supplied rubric or override. Start with the positioning
-checks in `references/review-guide.md`, judge each dimension with its checks,
-label evidence as it describes, and end with prioritized improvements to the assessed skill.
-
-Pass the skill's source directory as `skill_dir` and file-backed findings as
-`evidence`. This skill assesses source only: it does not test runtime behavior,
-and no scorecard claims runtime verification.
-
-Return the scorecard to the caller. This skill does not persist assessments: it
-creates no note, record, or assessment database. Storing an assessment is a
-separate operation outside this skill.
 
 ## Boundary
 
-- Read skill source directories only; do not write a skill, runtime link, or
-  upstream source.
-- Return the rubric ID and hash, content snapshot hash, evidence,
-  findings, and advisory suggestions for every assessment.
-- A suggestion to Study, link, defer, or consider a source project is not a
-  user decision and never authorizes an operation.
-- A `whole-project-preserve` Source Profile means individual low scores are
-  local diagnostics only; they are never a cleanup recommendation for that
-  source project or its entries.
-- Return external pattern suggestions to the current task. Approved skill edits
-  and runtime link changes are outside this skill.
+- Read the assessed skill's source and, for Positioning, the configuration and
+  rules that invoke it or overlap with it. Write nothing: no skill, runtime
+  link, or assessment record.
+- Assess source only; no scorecard claims runtime verification.
+- Suggestions are advisory. Edits and runtime link changes happen outside this
+  skill after the user approves them.

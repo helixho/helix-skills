@@ -43,10 +43,8 @@ type: ontology
 
 - Source Project 与 Skill Unit 只描述被评估 source，不表达安装或 runtime 状态。
 - Assessment 必须绑定明确内容快照和证据；不能据此自动执行修改、部署或生命周期决定。
-- upstream 项目级判断与单个 Skill Unit 的评价必须分开表达。
 
 ## operations
 
 - validate a Skill Unit
 - evaluate a Skill Unit
-- build a Source Profile

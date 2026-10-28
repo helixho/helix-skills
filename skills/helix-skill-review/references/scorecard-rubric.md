@@ -6,13 +6,12 @@ rubric_id: helix-skill-scorecard
 
 Use this rubric for one independently addressable skill package in a source
 tree. It is advisory evidence only: it never authorizes runtime linking,
-unlinking, archival, removal, or source edits. The lifecycle unit for an
-upstream source is the source project, never one skill inside that project.
+unlinking, archival, removal, or source edits.
 
 ## Preconditions
 
 Record source and structure facts before applying this rubric. Never normalize
-or patch an upstream skill during assessment.
+or patch the assessed skill during assessment.
 
 - `broken`: the selected skill directory has no usable root `SKILL.md`. Do not
   score it.
@@ -22,7 +21,7 @@ or patch an upstream skill during assessment.
 - `valid`: a usable root `SKILL.md` exists and is eligible for a human or LLM
   assessment. Missing or nonstandard frontmatter remains a source-native
   conformance fact and is reflected in Structure maturity; it is not a reason
-  to alter or retire an upstream skill.
+  to alter or retire the skill.
 
 ## Dimensions
 
@@ -93,10 +92,8 @@ skill or per run.
 
 ## Interpretation boundary
 
-The assessor returns only dimension scores and evidence. Score bands are query
-views, not lifecycle instructions. Source-project-level management metadata
-(source availability, duplicate routing, or a project retirement review) is
-maintained separately and does not modify the source artifact.
+The assessor returns dimension scores, evidence, findings, and advisory
+suggestions. Score bands are query views, not lifecycle instructions.
 
 ## Comparability
 

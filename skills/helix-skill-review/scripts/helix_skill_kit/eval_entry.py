@@ -10,7 +10,6 @@ from .contracts import ContractError, JsonResult, json_error, json_success, read
 from .conformance import validate_skill_directory
 from .eval import EvaluationService, load_rubric
 from .identity import content_hash, make_identity
-from .source_profile import SourceProfileService, load_source_profile_rubric
 
 
 def _required_text(value: Any, name: str) -> str:
@@ -53,14 +52,12 @@ def handle(request: dict[str, Any]) -> JsonResult:
     command = request.get("command")
     if command == "describe":
         rubric = load_rubric()
-        source_rubric = load_source_profile_rubric()
         return json_success(
             entrypoint="helix-skill-review",
-            commands=["describe", "validate", "evaluate", "evaluate_many", "profile_source"],
+            commands=["describe", "validate", "evaluate"],
             writes_external_state=False,
             persistence="none",
             rubric={"id": rubric.identifier, "hash": rubric.hash},
-            source_profile_rubric={"id": source_rubric.identifier, "hash": source_rubric.source_hash},
         )
     try:
         rubric_fields = {"rubric", "rubric_id", "rubric_hash"}
@@ -75,18 +72,7 @@ def handle(request: dict[str, Any]) -> JsonResult:
         if command == "evaluate":
             item = _item(request)
             return json_success(assessment=EvaluationService().evaluate(**item))
-        if command == "evaluate_many":
-            raw_items = request.get("items")
-            if not isinstance(raw_items, list):
-                raise ContractError("items must be a list")
-            items = [_item(item) for item in raw_items]
-            return json_success(**EvaluationService().evaluate_many(items))
-        if command == "profile_source":
-            return json_success(profile=SourceProfileService().evaluate(request))
-        return json_error(
-            "unknown_command",
-            "command must be describe, validate, evaluate, evaluate_many, or profile_source",
-        )
+        return json_error("unknown_command", "command must be describe, validate, or evaluate")
     except (KeyError, TypeError, ValueError, ContractError) as exc:
         return json_error("invalid_request", str(exc))
 

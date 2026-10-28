@@ -30,7 +30,7 @@ the positioning established here.
    skill.
 3. **Boundary**: what the skill does and does not do is stated. Each overlap with
    a sibling skill, a host built-in, or the owner's always-on rules is resolved
-   by a handoff or by keeping the rule in one place.
+   by a handoff, or for a duplicated rule, by Rule placement below.
 4. **Capability gaps**: list the cases the job requires and check that each is
    handled; an unhandled required case is a finding.
 5. **Rule placement**: a rule any user of the skill needs belongs in the skill; a
@@ -70,7 +70,8 @@ placement), Actionability (capability gaps), and Trigger quality (name).
 
 - Compare trigger and boundary with sibling skills and the host's built-in
   capabilities. A different trigger phrase is not a different capability.
-- Overlapping siblings call for a merge suggestion.
+- An overlap with a sibling that no handoff resolves calls for a merge
+  suggestion.
 
 **Maintainability**
 

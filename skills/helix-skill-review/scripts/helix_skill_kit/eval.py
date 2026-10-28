@@ -116,17 +116,3 @@ class EvaluationService:
             },
             **payload,
         }
-
-    def evaluate_many(self, items: list[dict[str, Any]]) -> dict[str, Any]:
-        if not isinstance(items, list) or not items:
-            raise ContractError("items must be a non-empty list")
-        timestamp = datetime.now(UTC).isoformat(timespec="seconds")
-        assessments = [self.evaluate(**item, assessed_at=timestamp) for item in items]
-        return {
-            "assessments": assessments,
-            "comparison": sorted(
-                [{"assessment_id": item["assessment_id"], "average": item["average"]} for item in assessments],
-                key=lambda item: item["average"],
-                reverse=True,
-            ),
-        }
