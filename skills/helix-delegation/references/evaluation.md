@@ -15,7 +15,7 @@ Record whether the fresh brief supplied the goal, source paths, scope, and check
 
 ## Interpret The Roles
 
-- `Explorer` is useful only when the main agent explicitly needs a large-codebase file map. Measure whether it found the right primary files and reduced parent search.
+- `Explorer` is useful when a bounded discovery question needs a substantial search. Measure whether it found the right primary files and reduced parent search.
 - `Executor` is useful when scope and checks are clear. Measure accepted output, rework, and time saved through independent ownership.
 - `Reviewer` should find material issues or confirm a meaningful risk was checked. A report with no findings is not automatically wasted work. Check a saved Markdown report when one was requested or useful.
 - `ExpertAdvisor` should contribute an independently grounded plan or complete the assigned modeling or automation. Check the actual model and result before calling it stronger-model work.
