@@ -1,4 +1,4 @@
-"""Contract tests for the helix-skill-eval entrypoint on temporary fixture skills."""
+"""Contract tests for the helix-skill-review entrypoint on temporary fixture skills."""
 import json
 from pathlib import Path
 import subprocess
@@ -8,7 +8,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[3]
-RUN = ROOT / "skills/helix-skill-eval/scripts/run.py"
+RUN = ROOT / "skills/helix-skill-review/scripts/run.py"
 DIMENSIONS = [
     "Value and fit",
     "Structure maturity",

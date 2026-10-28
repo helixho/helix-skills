@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Entrypoint for helix-skill-eval. Reads one JSON request on stdin, writes one JSON result."""
+"""Entrypoint for helix-skill-review. Reads one JSON request on stdin, writes one JSON result."""
 import sys
 from pathlib import Path
 

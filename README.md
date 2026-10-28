@@ -14,10 +14,10 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 | [helix-delegation](skills/helix-delegation/SKILL.md) | Split substantial work, brief agents, and verify delegated results across Codex and Claude Code. | “Delegate independent parts of this task and review the results.” |
 | [helix-handoff](skills/helix-handoff/SKILL.md) | Produce a reviewable session handoff that works across tools. | “Prepare a handoff so the next session can finish verification.” |
 | [helix-ip](skills/helix-ip/SKILL.md) | Define brand facts, positioning, messaging, and visual direction; review materials against that definition. | “Turn these materials into a brand IP.md.” |
-| [helix-rule-review](skills/helix-rule-review/SKILL.md) | Logically review rules for contradictions, gaps, precedence, terms, redundancy, and broken references, and arguments for support, causation, premises, and means to goals. | “Use rule review to check whether these rules contradict each other.” |
-| [helix-skill-eval](skills/helix-skill-eval/SKILL.md) | Assess skills to find improvements: check package structure, score against a built-in rubric and review guide, and judge what an external skill offers your own. | “Check this skill's structure; use the full assessment only if a score is needed.” |
+| [helix-logic-review](skills/helix-logic-review/SKILL.md) | Logically review rules for contradictions, gaps, precedence, terms, redundancy, and broken references, and arguments for support, causation, premises, and means to goals. | “Use rule review to check whether these rules contradict each other.” |
+| [helix-skill-review](skills/helix-skill-review/SKILL.md) | Assess skills to find improvements: check package structure, score against a built-in rubric and review guide, and judge what an external skill offers your own. | “Check this skill's structure; use the full assessment only if a score is needed.” |
 
-`helix-clarify`, `helix-handoff`, `helix-ip`, and `helix-rule-review` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-eval` scripts require Python 3.11+ and PyYAML.
+`helix-clarify`, `helix-handoff`, `helix-ip`, and `helix-logic-review` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-review` scripts require Python 3.11+ and PyYAML.
 
 ## Get started
 
@@ -39,7 +39,7 @@ ln -s "$PWD/skills/helix-clarify" "$HOME/.agents/skills/helix-clarify"
 
 If the target name already exists, inspect the existing installation and choose which source to use. In a new session, invoke the skill explicitly with `$helix-clarify`.
 
-In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff`, `helix-rule-review`, and `helix-skill-eval` are explicit-only by default: invoke them with `$helix-handoff`, `$helix-rule-review`, and `$helix-skill-eval`. `helix-handoff` and `helix-rule-review` are also explicit-only in Claude Code (`/helix-handoff`, `/helix-rule-review`). Follow the skill discovery and invocation conventions of other runtimes.
+In Codex, `helix-clarify`, `helix-delegation`, and `helix-ip` allow automatic selection by description. `helix-handoff`, `helix-logic-review`, and `helix-skill-review` are explicit-only by default: invoke them with `$helix-handoff`, `$helix-logic-review`, and `$helix-skill-review`. `helix-handoff` and `helix-logic-review` are also explicit-only in Claude Code (`/helix-handoff`, `/helix-logic-review`). Follow the skill discovery and invocation conventions of other runtimes.
 
 You can also ask an agent to read a selected `SKILL.md` and follow it for the current task.
 
@@ -51,22 +51,22 @@ From the repository root, create a Python environment and install the script dep
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -r skills/helix-skill-eval/scripts/requirements.txt
+.venv/bin/python -m pip install -r skills/helix-skill-review/scripts/requirements.txt
 ```
 
 List supported commands and rubric metadata:
 
 ```bash
-printf '%s\n' '{"command":"describe"}' | .venv/bin/python skills/helix-skill-eval/scripts/run.py
+printf '%s\n' '{"command":"describe"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
 ```
 
 Check a skill directory and its frontmatter:
 
 ```bash
-printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .venv/bin/python skills/helix-skill-eval/scripts/run.py
+printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
 ```
 
-The `conformant` result reports structural conformance. For a full assessment, the caller supplies judgments and evidence; the script validates those inputs and aggregates the result. Structural conformance or a score alone does not establish runtime behavior. See [helix-skill-eval](skills/helix-skill-eval/SKILL.md) for the full workflow.
+The `conformant` result reports structural conformance. For a full assessment, the caller supplies judgments and evidence; the script validates those inputs and aggregates the result. Structural conformance or a score alone does not establish runtime behavior. See [helix-skill-review](skills/helix-skill-review/SKILL.md) for the full workflow.
 
 ## Run behavior tests
 
@@ -76,10 +76,10 @@ The delegation reporter is tested with synthetic traces; tests never read your s
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
 ```
 
-The Skill Eval entrypoint contract is tested on temporary fixture skills and needs a Python environment with PyYAML:
+The Skill Review entrypoint contract is tested on temporary fixture skills and needs a Python environment with PyYAML:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-eval
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-review
 ```
 
 ## License

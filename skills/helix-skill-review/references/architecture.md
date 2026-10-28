@@ -2,7 +2,7 @@
 type: architecture
 ---
 
-# Architecture — Helix Skill Eval
+# Architecture — Helix Skill Review
 
 ## purpose
 

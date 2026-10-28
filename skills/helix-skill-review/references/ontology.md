@@ -2,7 +2,7 @@
 type: ontology
 ---
 
-# Ontology — Helix Skill Eval
+# Ontology — Helix Skill Review
 
 ## purpose
 

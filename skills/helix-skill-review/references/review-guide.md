@@ -4,7 +4,7 @@ How to judge a skill's source so the assessment ends in concrete improvements
 to that skill. Start with Positioning, then use the checks that bear on each
 scorecard dimension; record what they find as evidence, findings, and
 suggestions. Logical conflicts inside
-the instructions are reviewed with `helix-rule-review`.
+the instructions are reviewed with `helix-logic-review`.
 
 ## Evidence labels
 

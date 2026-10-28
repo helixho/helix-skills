@@ -1,4 +1,4 @@
-"""JSON stdin/stdout entrypoint for helix-skill-eval."""
+"""JSON stdin/stdout entrypoint for helix-skill-review."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def handle(request: dict[str, Any]) -> JsonResult:
         rubric = load_rubric()
         source_rubric = load_source_profile_rubric()
         return json_success(
-            entrypoint="helix-skill-eval",
+            entrypoint="helix-skill-review",
             commands=["describe", "validate", "evaluate", "evaluate_many", "profile_source"],
             writes_external_state=False,
             persistence="none",
