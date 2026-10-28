@@ -14,7 +14,7 @@
 | [helix-delegation](skills/helix-delegation/SKILL.md) | 拆分实质工作、编写任务说明并验收委派结果，适配 Codex 和 Claude Code | “把互不依赖的部分派出去，最后检查结果。” |
 | [helix-handoff](skills/helix-handoff/SKILL.md) | 生成可审阅、跨工具的会话交接说明 | “交接一下，下一场会话继续完成剩余验证。” |
 | [helix-ip](skills/helix-ip/SKILL.md) | 整理品牌事实、定位、口径和视觉方向；对照检查物料 | “根据这些材料，整理我的品牌 IP.md。” |
-| [helix-logic-review](skills/helix-logic-review/SKILL.md) | 对规则或论证做逻辑审查：规则查矛盾、空档、优先级、概念、冗余与失效引用；论证查依据、因果、前提与手段 | “用 rule review 检查这份规则有没有互相矛盾的地方。” |
+| [helix-logic-review](skills/helix-logic-review/SKILL.md) | 对规则或论证做逻辑审查：规则查矛盾、空档、优先级、概念、冗余与失效引用；论证查依据、因果、前提、手段与选项 | “用 rule review 检查这份规则有没有互相矛盾的地方。” |
 | [helix-skill-review](skills/helix-skill-review/SKILL.md) | 评估 skill 以找出改进点：检查包结构，按内置标准和评估指南评分，并判断外部 skill 有什么值得借鉴 | “检查这个 skill 的结构；需要评分时再做完整评估。” |
 
 `helix-clarify`、`helix-handoff`、`helix-ip`、`helix-logic-review` 只含指令或模板。Delegation 使用宿主运行时，其可选本地用量统计脚本需要 Python 3.10+；`helix-skill-review` 的脚本需要 Python 3.11+ 和 PyYAML。
