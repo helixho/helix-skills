@@ -37,9 +37,15 @@ the positioning established here.
    rule that is the owner's personal habit belongs in the owner's personal
    rules. A rule kept in both places is a finding; keep it where it belongs and
    drop the other copy.
+6. **Name**: the name states the job as positioned, neither narrower nor wider;
+   carries no term that suggests a capability the skill excludes or that was
+   left behind by an earlier role; follows the naming pattern of its siblings;
+   and is distinguishable from other skills and host built-ins. A rename
+   suggestion lists what refers to the old name: invocations, links, and other
+   documents.
 
 Positioning findings feed Value and fit (positioning), Uniqueness (boundary and
-placement), and Actionability (capability gaps).
+placement), Actionability (capability gaps), and Trigger quality (name).
 
 ## Checks by dimension
 
