@@ -1,4 +1,4 @@
-# Helix Skills Box
+# Helix Skills
 
 English | [简体中文](README.zh-CN.md)
 
@@ -21,11 +21,30 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 
 ## Get started
 
+### Install selected skills with the skills CLI
+
+Requires Node.js 22.20+. Run this from the project where you want to use the skills, then choose the skills and agents interactively:
+
+```bash
+npx skills add helixho/helix-skills
+```
+
+List available skills without installing, or install one selected skill for Codex:
+
+```bash
+npx skills add helixho/helix-skills --list
+npx skills add helixho/helix-skills --skill helix-clarify --agent codex
+```
+
+Installation is project-level by default; add `-g` for a user-level installation. `--skill` accepts multiple names; use `--agent claude-code` for Claude Code. Install only what you need. The CLI includes each skill's references, scripts, and templates, but does not install script dependencies or register Delegation runtime roles. See the [skills CLI reference](https://github.com/vercel-labs/skills/blob/main/docs/commands.md) for all options.
+
+### Install manually from source
+
 Clone the source:
 
 ```bash
-git clone https://github.com/helixho/helix-skills-box.git
-cd helix-skills-box
+git clone https://github.com/helixho/helix-skills.git
+cd helix-skills
 ```
 
 Install the selected skill directory in your agent's skills location, or create a symbolic link to its source. Each skill can be used independently.
@@ -47,7 +66,16 @@ For delegation, install the selected runtime's role templates using its [Codex a
 
 ## Update and uninstall
 
-For a symlink installation, run `git pull --ff-only` in the source repository to update; the next new session uses the updated files. For a copied installation, update the source and copy the complete skill directory again, checking for local modifications in the installation first.
+For skills installed with the skills CLI, update or remove them with the CLI:
+
+```bash
+npx skills update helix-clarify -p
+npx skills remove helix-clarify --agent codex
+```
+
+These commands target the current project; use `-g` for user-level updates or removal.
+
+For a manual symlink to the source repository, run `git pull --ff-only` in the source repository to update; the next new session uses the updated files. For a copied installation, update the source and copy the complete skill directory again, checking for local modifications in the installation first.
 
 To uninstall the symlink example above, first confirm that `~/.agents/skills/helix-clarify` is a symlink to this repository, then run:
 

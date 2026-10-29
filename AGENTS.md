@@ -1,4 +1,4 @@
-# Helix Skills Box
+# Helix Skills
 
 This public repository is the canonical source for the skills under `skills/`.
 

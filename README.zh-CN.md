@@ -1,4 +1,4 @@
-# Helix Skills Box
+# Helix Skills
 
 [English](README.md) | 简体中文
 
@@ -21,11 +21,30 @@
 
 ## 开始使用
 
+### 使用 skills CLI 按需安装
+
+需要 Node.js 22.20+。在准备使用 skill 的项目目录运行，交互选择需要的 skill 和 Agent：
+
+```bash
+npx skills add helixho/helix-skills
+```
+
+只查看可安装项，或直接指定某个 skill 安装到 Codex：
+
+```bash
+npx skills add helixho/helix-skills --list
+npx skills add helixho/helix-skills --skill helix-clarify --agent codex
+```
+
+默认安装到当前项目；加 `-g` 安装到用户级目录。`--skill` 可指定多个名称，`--agent claude-code` 可指定 Claude Code。只安装需要的 skill；CLI 会一起安装其目录内的参考资料、脚本和模板，不会安装脚本依赖或注册 Delegation 的运行时角色。完整选项见 [skills CLI 文档](https://github.com/vercel-labs/skills/blob/main/docs/commands.md)。
+
+### 从源码手动安装
+
 取得源码：
 
 ```bash
-git clone https://github.com/helixho/helix-skills-box.git
-cd helix-skills-box
+git clone https://github.com/helixho/helix-skills.git
+cd helix-skills
 ```
 
 把需要的 skill 目录放到所用 Agent 的 skills 目录，或创建指向源码的符号链接。每个 skill 都可独立使用。
@@ -47,7 +66,16 @@ Delegation 的角色模板按 [Codex 适配说明](skills/helix-delegation/refer
 
 ## 更新与卸载
 
-使用符号链接安装时，在源码仓库运行 `git pull --ff-only` 即可更新，下一次新会话使用更新后的文件。直接复制安装时，更新源码后重新复制完整的 skill 目录；先检查安装目录内是否有自己修改的内容。
+通过 skills CLI 安装的 skill，用 CLI 更新或移除：
+
+```bash
+npx skills update helix-clarify -p
+npx skills remove helix-clarify --agent codex
+```
+
+上述命令针对当前项目；用户级安装分别使用 `-g` 更新或移除。
+
+手动链接到源码仓库的安装，在源码仓库运行 `git pull --ff-only` 即可更新，下一次新会话使用更新后的文件。直接复制安装时，更新源码后重新复制完整的 skill 目录；先检查安装目录内是否有自己修改的内容。
 
 卸载上述链接示例时，先确认 `~/.agents/skills/helix-clarify` 是指向本仓库的符号链接，再运行：
 
