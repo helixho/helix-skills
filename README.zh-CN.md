@@ -45,42 +45,44 @@ Codex 中，`helix-clarify`、`helix-delegation` 和 `helix-ip` 可按描述自�
 
 Delegation 的角色模板按 [Codex 适配说明](skills/helix-delegation/references/runtime-codex.md) 或 [Claude Code 适配说明](skills/helix-delegation/references/runtime-claude-code.md) 安装。模型默认值是可替换示例；skill 本身不安装或修改运行时配置。
 
-## 运行结构检查
+## 更新与卸载
 
-在仓库根目录创建 Python 环境并安装脚本依赖：
+使用符号链接安装时，在源码仓库运行 `git pull --ff-only` 即可更新，下一次新会话使用更新后的文件。直接复制安装时，更新源码后重新复制完整的 skill 目录；先检查安装目录内是否有自己修改的内容。
+
+卸载上述链接示例时，先确认 `~/.agents/skills/helix-clarify` 是指向本仓库的符号链接，再运行：
+
+```bash
+unlink "$HOME/.agents/skills/helix-clarify"
+```
+
+直接复制安装的 skill，由所用运行时的管理功能或手动移除对应安装目录。Delegation 另行安装的角色模板需单独移除。
+
+## 统一检查
+
+检查需要 Python 3.11+ 和 PyYAML。在仓库根目录准备环境：
 
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r skills/helix-skill-review/scripts/requirements.txt
 ```
 
-查看支持的命令与评价标准元信息：
+运行全部自动检查：
 
 ```bash
-printf '%s\n' '{"command":"describe"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
+.venv/bin/python scripts/check.py
 ```
 
-检查某个 skill 的目录与 frontmatter：
+该命令逐个检查 `skills/` 下的 skill 结构、相对 Markdown 链接与个人主目录路径，并递归运行 `tests/` 下的 `test_*.py`。结构错误、个人主目录路径、测试加载错误、测试失败或没有发现测试时返回非零退出码；兼容的运行时扩展仅显示警告。GitHub Actions 在 push、pull request 和手动触发时运行相同入口。
+
+自动测试覆盖 Delegation 用量统计、Skill Review 的脚本入口契约，以及统一检查的测试发现与失败传递。测试使用合成轨迹和临时样本，不读取真实会话。`tests/skills/helix-logic-review/cases.md` 是需单独执行的模型行为验收案例，不属于自动测试；结构检查和脚本测试通过不代表模型行为已经验证。
+
+仅检查一个 skill 时，可调用现有入口：
 
 ```bash
-printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
+printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify","public":true}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
 ```
 
-结果中的 `conformant` 表示结构是否合规。完整评价的判断与证据由调用者提供，脚本校验输入并汇总结果；结构通过或评分本身都不能证明实际运行效果。完整流程见 [helix-skill-review](skills/helix-skill-review/SKILL.md)。
-
-## 运行行为测试
-
-Delegation 用量统计使用合成轨迹测试，不读取你的真实会话：
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
-```
-
-Skill Review 的入口契约在临时样本 skill 上测试，需要已安装 PyYAML 的 Python 环境：
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-review
-```
+结果中的 `conformant` 表示结构是否合规；公开路径扫描结果单独列于 `isolation_findings`。完整评价的判断与证据由调用者提供，脚本校验输入并汇总结果；结构通过或评分本身都不能证明实际运行效果。完整流程见 [helix-skill-review](skills/helix-skill-review/SKILL.md)。
 
 ## 许可证
 

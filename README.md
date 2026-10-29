@@ -45,42 +45,44 @@ You can also ask an agent to read a selected `SKILL.md` and follow it for the cu
 
 For delegation, install the selected runtime's role templates using its [Codex adapter](skills/helix-delegation/references/runtime-codex.md) or [Claude Code adapter](skills/helix-delegation/references/runtime-claude-code.md). Model defaults are replaceable examples; the skill does not install or change your runtime configuration.
 
-## Run a structural check
+## Update and uninstall
 
-From the repository root, create a Python environment and install the script dependency:
+For a symlink installation, run `git pull --ff-only` in the source repository to update; the next new session uses the updated files. For a copied installation, update the source and copy the complete skill directory again, checking for local modifications in the installation first.
+
+To uninstall the symlink example above, first confirm that `~/.agents/skills/helix-clarify` is a symlink to this repository, then run:
+
+```bash
+unlink "$HOME/.agents/skills/helix-clarify"
+```
+
+For a copied skill, use the runtime's management feature or remove its installed directory manually. Remove any separately installed Delegation role templates separately.
+
+## Check the repository
+
+Checks require Python 3.11+ and PyYAML. Prepare an environment from the repository root:
 
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r skills/helix-skill-review/scripts/requirements.txt
 ```
 
-List supported commands and rubric metadata:
+Run all automated checks:
 
 ```bash
-printf '%s\n' '{"command":"describe"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
+.venv/bin/python scripts/check.py
 ```
 
-Check a skill directory and its frontmatter:
+This checks each skill under `skills/` for structural conformance, relative Markdown links, and personal home paths, then recursively runs `test_*.py` under `tests/`. Structural errors, personal home paths, test loading errors, failed tests, or no discovered tests produce a nonzero exit code. Compatible runtime extensions are reported as warnings. GitHub Actions runs the same entrypoint on pushes, pull requests, and manual dispatch.
+
+Automated tests cover the Delegation usage reporter, the Skill Review script entrypoint contract, and the repository checker's test discovery and failure propagation. Tests use synthetic traces and temporary fixtures, never real sessions. `tests/skills/helix-logic-review/cases.md` contains model behavior acceptance cases that must be run separately; they are outside the automated suite. Passing structural checks and script tests does not establish model behavior.
+
+To check just one skill, use the existing entrypoint:
 
 ```bash
-printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify"}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
+printf '%s\n' '{"command":"validate","skill_dir":"skills/helix-clarify","public":true}' | .venv/bin/python skills/helix-skill-review/scripts/run.py
 ```
 
-The `conformant` result reports structural conformance. For a full assessment, the caller supplies judgments and evidence; the script validates those inputs and aggregates the result. Structural conformance or a score alone does not establish runtime behavior. See [helix-skill-review](skills/helix-skill-review/SKILL.md) for the full workflow.
-
-## Run behavior tests
-
-The delegation reporter is tested with synthetic traces; tests never read your sessions:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/skills/helix-delegation
-```
-
-The Skill Review entrypoint contract is tested on temporary fixture skills and needs a Python environment with PyYAML:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m unittest discover -s tests/skills/helix-skill-review
-```
+The `conformant` result reports structural conformance; public path scan results are listed separately in `isolation_findings`. For a full assessment, the caller supplies judgments and evidence; the script validates those inputs and aggregates the result. Structural conformance or a score alone does not establish runtime behavior. See [helix-skill-review](skills/helix-skill-review/SKILL.md) for the full workflow.
 
 ## License
 
