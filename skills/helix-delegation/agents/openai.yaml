@@ -1,4 +1,4 @@
 interface:
   display_name: "Delegation"
-  short_description: "Run design, execution and review through separate agent roles"
+  short_description: "Run planner, builder and verifier work through separate agent roles"
   default_prompt: "Use $helix-delegation to decide which roles this task needs; work directly if it is simple, and review any delegated results before accepting them."

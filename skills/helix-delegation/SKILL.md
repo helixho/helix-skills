@@ -1,6 +1,6 @@
 ---
 name: helix-delegation
-description: "Run work through separate agent roles: design, execution, and review, plus discovery and expert views. Use when a task needs separate roles — a complex or high-risk task, an independent review or expert view, or a large task split into non-overlapping parallel parts — or when the user requests delegation."
+description: "Run work through separate agent roles — planner, builder, verifier, plus explorer, reviewer and expert — that carry no model of their own. Use when a task needs separate roles — a complex or high-risk task, an independent review or expert view, or a large task split into non-overlapping parallel parts — or when the user requests delegation."
 metadata:
   compatibility: "Runtime adapters for Codex and Claude Code; CLI executors need the target CLI installed and signed in. Diagnostics scripts need Python 3.10+."
 ---
@@ -9,9 +9,9 @@ metadata:
 
 Which roles a task needs comes from the project's delivery rules. Where they say nothing, use this default:
 
-- **Simple** (clear scope and change, local, low risk): the main agent does it directly.
-- **Complex** (design trade-offs, a change across modules or contracts, or an unclear approach): separate at least design, execution, and review.
-- **High risk** (data destruction, permissions, migration, external protocols, or major architecture): add an independent review or expert view, and leave the decision to the user.
+- **Simple** (clear scope and change, local, no change to contracts, data structures, migrations, or permissions): a `builder`, usually the main agent itself.
+- **Complex** (design trade-offs, a change across modules or contracts, an unclear approach, or a root cause still unknown after one attempt): `planner` → `builder` → `verifier`.
+- **High risk** (data destruction or migration, permissions, external protocols, secrets, or irreversible operations): add a `reviewer`, and leave the decision to the user.
 
 Also delegate when the user asks for it, or when a large task splits into non-overlapping parts and parallel work is clearly faster. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
 
@@ -26,16 +26,18 @@ To run another vendor's agent CLI headless (Grok Build, `codex exec`) from any r
 
 ## Roles
 
-Design is held by the main agent, or by `ExpertAdvisor` for a complex or high-impact decision; execution by `Executor`; review by `Reviewer` in its own context. The adapters map these roles to their runtime:
+Roles define duties, independence, and when they are used. They carry no model: which model and effort a role runs on is set in the runtime's installed agent profiles, not chosen at dispatch. Each adapter maps the roles to its profiles.
 
-- `Explorer` — a bounded codebase-discovery question that returns primary files, entry points and their connections with brief evidence. Avoid duplicate general maps; the main agent combines results before deciding changes.
-- `Executor` — implementation of a slice whose intended result and file ownership are clear.
-- `Reviewer` — independent review of a stable result.
-- `ExpertAdvisor` — an independent plan for a complex or high-impact decision, a problem unresolved after repeated attempts, or assigned modeling or complex automation.
+- `planner` — the approach and its trade-offs, the breakdown, and the acceptance cases the work must satisfy; also checks that the builder delivered what was designed. Usually the main agent.
+- `builder` — implements a slice against the acceptance cases and writes its unit and contract tests in the same task. The default executor.
+- `verifier` — checks the changed flow end to end against the acceptance cases, in its own context, with expectations taken from the requirements rather than the implementation. Prefer a different underlying model from the builder's where one is configured.
+- `explorer` — a bounded, read-only codebase-discovery question that returns primary files, entry points and their connections with brief evidence. Avoid duplicate general maps; the main agent combines results before deciding changes.
+- `reviewer` — independent code-level review, for high-risk changes only.
+- `expert` — an independent plan for a major architecture or key decision. Use it only when the user asks or after a builder has twice failed to deliver; never escalate to it on the agent's own judgment of difficulty.
 
 ## Splitting the work
 
-- **Delegate bounded parts** that need substantial independent work: an implementation slice, broad discovery, an independent review, or expert work.
+- **Delegate bounded parts** that need substantial independent work: an implementation slice, broad discovery, an end-to-end verification, or expert work.
 - **Do it directly** when the scope and change are already clear to the main agent: cleanups, small fixes, documentation and configuration edits, git work, lookups. Size alone is not a reason to delegate.
 - **Match agents to ready work.** Use one agent per distinct question, slice, or review lens that can work and report independently. Parallelize only slices whose prerequisites are met; run dependent slices in order. Before parallel dispatch, settle any interface or contract the slices share. Do not add agents just to fill a planned count.
 - **Give each target one owner.** A file, change area, or shared service (dev server, port, database, container, account) has one owner at a time; work on the same service runs in sequence. Writers with separate files can share one checkout. If parallel writers could still collide (the same build outputs, lockfiles, services, or tests), run them in sequence or isolate each in its own worktree that the main agent integrates. Run at most five writers in parallel.
@@ -67,11 +69,11 @@ Then decide: accept, send back with the specific defect, or take over. If the ex
 
 Accepting a child's result is not completion. Before reporting completion, confirm the accepted changes are present in the final target and verify the resulting behavior there. The main agent commits accepted work, integrates it into the target branch following the user's Git workflow, and removes child worktrees and branches.
 
-## Independent review
+## Verification and review
 
-Use a `Reviewer` that does not inherit the main thread's conclusions for complex or high-risk work under the role configuration above, or when the user asks for review. Unless the user asked for a separate simplification pass, the same review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
+Use a `verifier` that does not inherit the main thread's conclusions for complex or high-risk work, or when the user asks. It covers the flows the change touches; a full regression runs only where the project's delivery rules put it. Add a `reviewer` for high-risk changes. Unless the user asked for a separate simplification pass, the review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
 
-Review per batch, not per small fix; test-only or fixture-only changes are covered by the batch review. Start a fresh `Reviewer` for each batch instead of sending new batches to a long-running one. If a finding is still open after one send-back round, the main agent reproduces it and decides instead of cycling the review again.
+Verify per batch, not per small fix. Start a fresh `verifier` or `reviewer` for each batch instead of sending new batches to a long-running one. If a finding is still open after one send-back round, the `planner` reproduces it and decides instead of cycling the check again.
 
 ## Long runs
 

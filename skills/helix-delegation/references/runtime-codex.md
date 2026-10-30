@@ -4,26 +4,24 @@ For a main agent running in Codex with the custom agent profiles in `assets/code
 
 ## Roles
 
-Use the named custom agents for their roles; complex implementation can use the built-in `worker` as described below. Dispatch non-overlapping independent parts together. Respect the host's active-agent limit; if parallel dispatch is unavailable, continue sequentially or inline without silently dropping coverage.
+Map the roles to the installed custom agents:
 
-For each dispatch, name the intended `agent_type`; a spawn without one runs as a generic child on the configured fallback model. Also name the count, independent scope, expected return, and write ownership. `Explorer` handles substantial discovery only; do small lookups and general research directly. `Reviewer` reviews the assigned result without steering toward a suspected answer and returns findings in its reply; when a lasting record helps, the brief names a report path outside the changed source. For `ExpertAdvisor`, ask for an independent plan or assign a concrete outcome to produce.
+| Role | `agent_type` |
+| --- | --- |
+| `planner` | the main agent |
+| `builder` | `Executor` |
+| `verifier` | `Reviewer`, briefed to check the changed flow end to end against the acceptance cases |
+| `explorer` | `Explorer` |
+| `reviewer` | `Reviewer` |
+| `expert` | `ExpertAdvisor` |
 
-Other configured roles and models are allowed when appropriate. Model and effort defaults are described in [profile setup](codex-profiles.md); normal dispatch does not require reading it.
+Dispatch non-overlapping independent parts together. Respect the host's active-agent limit; if parallel dispatch is unavailable, continue sequentially or inline without silently dropping coverage.
 
-## Implementation model selection
+For each dispatch, name the intended `agent_type`; a spawn without one runs as a generic child on the configured fallback model. Also name the count, independent scope, expected return, and write ownership. `explorer` handles substantial discovery only; do small lookups and general research directly. A `verifier` or `reviewer` checks the assigned result without steering toward a suspected answer and returns findings in its reply; when a lasting record helps, the brief names a report path outside the changed source. For an `expert`, ask for an independent plan or assign a concrete outcome to produce.
 
-Use `Executor` for a bounded implementation with clear acceptance criteria.
-When correctness requires reasoning across module contracts, parser edge cases,
-or deletion/state/lifecycle transactions, use built-in `worker` with `model="gpt-6.1-sol"`,
-`reasoning_effort="high"`, and `fork_turns="none"`. Complexity of the behavior,
-not file count alone, determines this choice. Keep the same brief, ownership,
-and result review required for an Executor.
+## Model selection
 
-Do not request a different model on the fixed `Executor` profile: its configured
-model takes precedence. Explicitly select the model on `worker`; a full-history
-fork inherits the parent's model and effort. If the requested model is unavailable,
-keep the work in the main agent and report the limitation. Model choice does not
-replace verification of the result.
+Models and effort come from the installed profiles; [profile setup](codex-profiles.md) explains how they resolve. Do not pass `model` or `reasoning_effort` at dispatch and do not use the built-in `worker` to pick a model. A role that needs a different model gets it by changing or adding a profile, not per task. A full-history fork inherits the parent's model and effort.
 
 ## Context and handoff
 
@@ -39,7 +37,7 @@ Codex compacts a long thread only when it reaches the configured limit; until th
 
 ## Expert help
 
-`ExpertAdvisor` runs on the strongest model in [profile setup](codex-profiles.md); its value is an independent view, so use it even when the parent runs the same model.
+An `expert`'s value is an independent view, so it remains useful even when the parent runs the same model.
 
 Give it the decision or outcome, relevant context, evidence, constraints, and scope. The expert may produce a plan or carry out assigned modeling or complex automation; computer automation that takes over the user's screen is an approval-gated action. Check its result before accepting it.
 
