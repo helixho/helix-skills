@@ -1,13 +1,19 @@
 ---
 name: helix-delegation
-description: "Split, brief, and review delegated work. Use when the user requests delegation or independent review, when a large task can be split into non-overlapping parts and parallel work is clearly faster, or when a risky result or high-impact decision warrants an independent review or expert view."
+description: "Run work through separate agent roles: design, execution, and review, plus discovery and expert views. Use when a task needs separate roles — a complex or high-risk task, an independent review or expert view, or a large task split into non-overlapping parallel parts — or when the user requests delegation."
 metadata:
   compatibility: "Runtime adapters for Codex and Claude Code; CLI executors need the target CLI installed and signed in. Diagnostics scripts need Python 3.10+."
 ---
 
 # Delegation
 
-Delegate when the user asks for it, when a large task can be split into non-overlapping parts and parallel work is clearly faster, or when a result or decision warrants an independent `Reviewer` or `ExpertAdvisor` (see Roles and Independent review). Otherwise work directly. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
+Which roles a task needs comes from the project's delivery rules. Where they say nothing, use this default:
+
+- **Simple** (clear scope and change, local, low risk): the main agent does it directly.
+- **Complex** (design trade-offs, a change across modules or contracts, or an unclear approach): separate at least design, execution, and review.
+- **High risk** (data destruction, permissions, migration, external protocols, or major architecture): add an independent review or expert view, and leave the decision to the user.
+
+Also delegate when the user asks for it, or when a large task splits into non-overlapping parts and parallel work is clearly faster. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
 
 ## Runtime adapter
 
@@ -20,7 +26,7 @@ To run another vendor's agent CLI headless (Grok Build, `codex exec`) from any r
 
 ## Roles
 
-The adapters map these roles to their runtime:
+Design is held by the main agent, or by `ExpertAdvisor` for a complex or high-impact decision; execution by `Executor`; review by `Reviewer` in its own context. The adapters map these roles to their runtime:
 
 - `Explorer` — a bounded codebase-discovery question that returns primary files, entry points and their connections with brief evidence. Avoid duplicate general maps; the main agent combines results before deciding changes.
 - `Executor` — implementation of a slice whose intended result and file ownership are clear.
@@ -33,7 +39,7 @@ The adapters map these roles to their runtime:
 - **Do it directly** when the scope and change are already clear to the main agent: cleanups, small fixes, documentation and configuration edits, git work, lookups. Size alone is not a reason to delegate.
 - **Match agents to ready work.** Use one agent per distinct question, slice, or review lens that can work and report independently. Parallelize only slices whose prerequisites are met; run dependent slices in order. Before parallel dispatch, settle any interface or contract the slices share. Do not add agents just to fill a planned count.
 - **Give each target one owner.** A file, change area, or shared service (dev server, port, database, container, account) has one owner at a time; work on the same service runs in sequence. Writers with separate files can share one checkout. If parallel writers could still collide (the same build outputs, lockfiles, services, or tests), run them in sequence or isolate each in its own worktree that the main agent integrates. Run at most five writers in parallel.
-- **Defer slow checks.** During implementation, unit tests and a minimal smoke check are enough. Run end-to-end or browser acceptance once at the end of a batch, unless the user asks otherwise or the change cannot be judged another way. If the user has said where tests run, follow that.
+- **Follow the project's test cadence.** Run the checks the project's delivery rules assign to each stage. By default, unit tests and a minimal smoke check are enough during implementation, and end-to-end or browser acceptance runs once at the end of a batch, unless the user asks otherwise or the change cannot be judged another way. If the user has said where tests run, follow that.
 
 ## The brief
 
@@ -63,7 +69,7 @@ Accepting a child's result is not completion. Before reporting completion, confi
 
 ## Independent review
 
-Use a `Reviewer` that does not inherit the main thread's conclusions when a result carries meaningful risk of unnoticed defects or the user asks for review. Unless the user asked for a separate simplification pass, the same review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
+Use a `Reviewer` that does not inherit the main thread's conclusions for complex or high-risk work under the role configuration above, or when the user asks for review. Unless the user asked for a separate simplification pass, the same review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
 
 Review per batch, not per small fix; test-only or fixture-only changes are covered by the batch review. Start a fresh `Reviewer` for each batch instead of sending new batches to a long-running one. If a finding is still open after one send-back round, the main agent reproduces it and decides instead of cycling the review again.
 
@@ -73,7 +79,7 @@ Keep the main thread small: decisions, status, and the next step. Every main-age
 
 - **Delegate bulky loops.** Give one delegated owner the command loops whose output is bulky: remote or test-environment runs, repeated test cycles, log triage. It returns conclusions and evidence paths; the main agent spot-checks the evidence instead of rerunning the loop.
 - **Wait, do not poll.** Wait for children with the runtime's blocking wait or completion notification, not short repeated sleeps; each wake-up is another full-context call.
-- **Stop at acceptance points.** When the user lets a long run continue without asking, stop at each agreed acceptance point (the end of a package or batch) and report the result, the remaining work, and the usage so far before starting the next.
+- **Stop at acceptance points.** When the user lets a long run continue without asking, stop at each acceptance point the project's delivery rules define (by default, the end of a package or batch) and report the result, the remaining work, and the usage so far before starting the next.
 
 How to handle a filling context follows the runtime adapter.
 
