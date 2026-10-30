@@ -29,13 +29,13 @@ replace verification of the result.
 
 Start a new child with `fork_turns="none"` by default. Always use it for `Reviewer` and `ExpertAdvisor`, whose value depends on an independent view. Use it for `Explorer` too: a question and codebase path are usually enough.
 
-An `Executor` may inherit the parent conversation when decisions in it cannot be conveyed reliably in a short brief. The current `fork_turns` API accepts only `"none"` or `"all"`; use `"all"` only when the full history is genuinely needed. Reuse an existing child for a direct continuation of its own assignment.
+An `Executor` may inherit the parent conversation when decisions in it cannot be conveyed reliably in a short brief. The current `fork_turns` API accepts only `"none"` or `"all"`; use `"all"` only when the full history is genuinely needed. Reuse an existing child for a direct continuation of its own assignment; a new review batch is not one, so start a fresh `Reviewer`.
 
 Give the child its assigned question or deliverable, relevant context, and scope. Include the broader user goal when it helps explain the assignment. The child chooses its method within the assigned part; the main agent handles changes to the task breakdown and checks the returned work.
 
 Children run in the parent's checkout. When the skill entry calls for isolation, create a worktree per writer with the runtime's managed worktree tool when available, otherwise `git worktree add <path> -b <branch> <base>` from the branch that holds its prerequisites, and name that path as the child's working directory in the brief. After acceptance, merge the branch and remove the worktree and branch.
 
-Codex compacts a long thread automatically; continue in the current thread.
+Codex compacts a long thread only when it reaches the configured limit; until then every call re-reads the whole thread, so keep the main thread small as the skill entry describes. Wait for children with `wait_agent` and a long timeout, not `sleep`.
 
 ## Expert help
 

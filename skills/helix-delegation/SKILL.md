@@ -65,8 +65,16 @@ Accepting a child's result is not completion. Before reporting completion, confi
 
 Use a `Reviewer` that does not inherit the main thread's conclusions when a result carries meaningful risk of unnoticed defects or the user asks for review. Unless the user asked for a separate simplification pass, the same review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
 
+Review per batch, not per small fix; test-only or fixture-only changes are covered by the batch review. Start a fresh `Reviewer` for each batch instead of sending new batches to a long-running one. If a finding is still open after one send-back round, the main agent reproduces it and decides instead of cycling the review again.
+
 ## Long runs
 
-Keep the main thread small: decisions, status, and the next step. Leave bulky reading and logs to delegated work. How to handle a filling context follows the runtime adapter.
+Keep the main thread small: decisions, status, and the next step. Every main-agent call re-reads the whole thread, so bulky output is paid for again on each later step.
+
+- **Delegate bulky loops.** Give one delegated owner the command loops whose output is bulky: remote or test-environment runs, repeated test cycles, log triage. It returns conclusions and evidence paths; the main agent spot-checks the evidence instead of rerunning the loop.
+- **Wait, do not poll.** Wait for children with the runtime's blocking wait or completion notification, not short repeated sleeps; each wake-up is another full-context call.
+- **Stop at acceptance points.** When the user lets a long run continue without asking, stop at each agreed acceptance point (the end of a package or batch) and report the result, the remaining work, and the usage so far before starting the next.
+
+How to handle a filling context follows the runtime adapter.
 
 For interactive-state checks that code inspection cannot settle, read [interactive testing guidance](references/interactive-testing.md).

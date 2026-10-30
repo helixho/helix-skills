@@ -30,6 +30,9 @@ See [official custom-agent configuration](https://learn.chatgpt.com/docs/agent-c
 
 An optional `[agents]` default model/effort can limit the cost of accidentally
 spawning without an intended role. Choose it from the account's available models.
+Set `model_auto_compact_token_limit` well below the context window (for example
+about 300K) so a long orchestration run does not re-read a near-full context on
+every call.
 Profiles inherit parent permissions, provider, MCP configuration and service tier;
 this package does not override those settings.
 
