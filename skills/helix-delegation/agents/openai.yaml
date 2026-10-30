@@ -1,4 +1,6 @@
+policy:
+  allow_implicit_invocation: false
 interface:
   display_name: "Delegation"
   short_description: "Run planner, builder and verifier work through separate agent roles"
-  default_prompt: "Use $helix-delegation to decide which roles this task needs; work directly if it is simple, and review any delegated results before accepting them."
+  default_prompt: "Use $helix-delegation to run the subagents I asked for in this session and review their results before accepting them."

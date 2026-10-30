@@ -1,19 +1,21 @@
 ---
 name: helix-delegation
-description: "Run work through separate agent roles — planner, builder, verifier, plus explorer, reviewer and expert — that carry no model of their own. Use when a task needs separate roles — a complex or high-risk task, an independent review or expert view, or a large task split into non-overlapping parallel parts — or when the user requests delegation."
+description: "Run subagents inside one agent session when the user asks: parallel read-only research, isolating bulky test or log loops, an independent review or second opinion, or a team of planner, builder and verifier roles the user launched from this session. Covers role-to-profile mapping, briefs, ownership, waiting, and checking results; it does not decide task complexity or choose models."
+disable-model-invocation: true
 metadata:
   compatibility: "Runtime adapters for Codex and Claude Code; CLI executors need the target CLI installed and signed in. Diagnostics scripts need Python 3.10+."
 ---
 
 # Delegation
 
-Which roles a task needs comes from the project's delivery rules. Where they say nothing, use this default:
+Use this skill only when the user asks for subagents in the current session. It covers four uses:
 
-- **Simple** (clear scope and change, local, no change to contracts, data structures, migrations, or permissions): a `builder`, usually the main agent itself.
-- **Complex** (design trade-offs, a change across modules or contracts, an unclear approach, or a root cause still unknown after one attempt): `planner` → `builder` → `verifier`.
-- **High risk** (data destruction or migration, permissions, external protocols, secrets, or irreversible operations): add a `reviewer`, and leave the decision to the user.
+- **Parallel read-only research:** several `explorer` questions that do not overlap.
+- **Bulky loops:** one child owns a test, environment, or log-triage loop and returns conclusions, keeping the main thread small.
+- **Independent check:** a `verifier`, `reviewer`, or `expert` the user asked for.
+- **A team the user launched here:** `planner` → `builder` → `verifier`, when this session is the user's chosen orchestration entry. Which roles a task needs comes from the project's delivery rules and the user's decision; this skill does not judge task complexity or assemble a team on its own.
 
-Also delegate when the user asks for it, or when a large task splits into non-overlapping parts and parallel work is clearly faster. The main agent owns the task breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the executor rebuilds context and the main agent reviews the result.
+A child assigned a role does that role only and does not spawn further roles. The main agent owns the breakdown, unresolved product decisions, integration, and final acceptance. Delegation spends tokens twice: the child rebuilds context and the main agent reviews the result.
 
 ## Runtime adapter
 
@@ -71,7 +73,7 @@ Accepting a child's result is not completion. Before reporting completion, confi
 
 ## Verification and review
 
-Use a `verifier` that does not inherit the main thread's conclusions for complex or high-risk work, or when the user asks. It covers the flows the change touches; a full regression runs only where the project's delivery rules put it. Add a `reviewer` for high-risk changes. Unless the user asked for a separate simplification pass, the review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
+Use a `verifier` that does not inherit the main thread's conclusions when the user asks for one or the team calls for it. It covers the flows the change touches; a full regression runs only where the project's delivery rules put it. Add a `reviewer` for high-risk changes. Unless the user asked for a separate simplification pass, the review also looks for needless complexity in the code this task wrote; it proposes structural refactors (splitting files or components) only when the user asked for them. When the user asks to simplify code, follow [Simplify](references/simplify.md).
 
 Verify per batch, not per small fix. Start a fresh `verifier` or `reviewer` for each batch instead of sending new batches to a long-running one. If a finding is still open after one send-back round, the `planner` reproduces it and decides instead of cycling the check again.
 
