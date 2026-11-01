@@ -1,0 +1,165 @@
+"""Read-only structural conformance checks for the Agent Skills specification."""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+
+_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+_ALLOWED_FRONTMATTER_FIELDS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
+# Runtime-specific fields outside the specification, accepted with a warning naming the runtime.
+_RUNTIME_EXTENSION_FIELDS = {
+    "disable-model-invocation": ("Claude Code", bool),
+}
+
+
+def _parse_skill_markdown(path: Path) -> tuple[dict[str, Any] | None, str, list[str]]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return None, "", ["SKILL.md must be valid UTF-8"]
+    if not text.startswith("---\n"):
+        return None, "", ["SKILL.md must start with YAML frontmatter at the first byte"]
+    end = text.find("\n---\n", 4)
+    if end < 0:
+        return None, "", ["SKILL.md frontmatter must close with --- before the Markdown body"]
+    try:
+        frontmatter = yaml.safe_load(text[4:end])
+    except yaml.YAMLError as exc:
+        return None, "", [f"SKILL.md frontmatter must be valid YAML: {exc}"]
+    if not isinstance(frontmatter, dict):
+        return None, "", ["SKILL.md frontmatter must be a YAML mapping"]
+    return frontmatter, text[end + 5 :], []
+# A personal home directory, except the documented placeholders.
+_HOME_PATH_RE = re.compile(r"(?:/Users/(?!example/)|/home/(?!user/)|[A-Za-z]:\\Users\\(?!example\\))[A-Za-z0-9._-]+")
+
+
+def _skill_files(root: Path) -> list[str]:
+    return sorted(
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts and path.name != ".DS_Store"
+    )
+
+
+_LINK_RE = re.compile(r"\]\(([^)\s#]+)(?:#[^)]*)?\)")
+
+
+def _broken_links(root: Path) -> list[str]:
+    """Relative Markdown links that do not resolve to a file or directory."""
+    broken = []
+    for path in sorted(root.rglob("*.md")):
+        if "__pycache__" in path.parts:
+            continue
+        for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            for target in _LINK_RE.findall(line):
+                if "://" in target or target.startswith("mailto:"):
+                    continue
+                if not (path.parent / target).exists():
+                    broken.append(f"broken link {path.relative_to(root).as_posix()}:{number}: {target}")
+    return broken
+
+
+def _isolation_findings(root: Path) -> list[str]:
+    findings = []
+    for path in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except (UnicodeDecodeError, OSError):
+            continue
+        for number, line in enumerate(lines, 1):
+            if match := _HOME_PATH_RE.search(line):
+                findings.append(f"{path.relative_to(root).as_posix()}:{number}: personal home path {match.group(0)}")
+    return findings
+
+
+def validate_skill_directory(skill_dir: Path, public: bool = False) -> dict[str, Any]:
+    """Return deterministic Agent Skills conformance facts without writing files."""
+    root = skill_dir.expanduser().resolve()
+    errors: list[str] = []
+    warnings: list[str] = []
+    skill_md = root / "SKILL.md"
+
+    if not root.is_dir():
+        errors.append("skill_dir must be an existing directory")
+    elif not skill_md.is_file():
+        errors.append("skill directory must contain SKILL.md at its root")
+
+    frontmatter: dict[str, Any] | None = None
+    body = ""
+    if not errors:
+        frontmatter, body, parse_errors = _parse_skill_markdown(skill_md)
+        errors.extend(parse_errors)
+
+    if frontmatter is not None:
+        unknown = sorted(set(frontmatter) - _ALLOWED_FRONTMATTER_FIELDS - set(_RUNTIME_EXTENSION_FIELDS))
+        if unknown:
+            errors.append(f"unsupported top-level frontmatter fields: {', '.join(unknown)}")
+        for field, (runtime, kind) in sorted(_RUNTIME_EXTENSION_FIELDS.items()):
+            if field not in frontmatter:
+                continue
+            if not isinstance(frontmatter[field], kind):
+                errors.append(f"{field} must be a {kind.__name__}")
+            else:
+                warnings.append(f"{field} is a {runtime} extension outside the Agent Skills specification")
+
+        name = frontmatter.get("name")
+        if not isinstance(name, str) or not name:
+            errors.append("name must be a non-empty string")
+        elif len(name) > 64 or not _NAME_RE.fullmatch(name):
+            errors.append("name must be 1-64 lowercase letters, numbers, or single hyphens")
+        elif name != root.name:
+            errors.append("name must match the parent directory name")
+
+        description = frontmatter.get("description")
+        if not isinstance(description, str) or not description:
+            errors.append("description must be a non-empty string")
+        elif len(description) > 1024:
+            errors.append("description must be at most 1024 characters")
+
+        compatibility = frontmatter.get("compatibility")
+        if compatibility is not None and (
+            not isinstance(compatibility, str) or not 1 <= len(compatibility) <= 500
+        ):
+            errors.append("compatibility must be a 1-500 character string")
+
+        metadata = frontmatter.get("metadata")
+        if metadata is not None and (
+            not isinstance(metadata, dict)
+            or any(not isinstance(key, str) or not isinstance(value, str) for key, value in metadata.items())
+        ):
+            errors.append("metadata must map string keys to string values")
+
+        for field in ("license", "allowed-tools"):
+            value = frontmatter.get(field)
+            if value is not None and (not isinstance(value, str) or not value):
+                errors.append(f"{field} must be a non-empty string")
+
+        if not body.strip():
+            errors.append("SKILL.md must contain a non-empty Markdown body")
+        errors.extend(_broken_links(root))
+        if len(skill_md.read_text(encoding="utf-8").splitlines()) > 500:
+            warnings.append("SKILL.md exceeds the recommended 500-line limit")
+
+    result = {
+        "skill_dir": str(root),
+        "files": _skill_files(root) if root.is_dir() else [],
+        "conformant": not errors,
+        "errors": errors,
+        "warnings": warnings,
+        "specification": "https://agentskills.io/specification",
+    }
+    if public:
+        result["isolation_findings"] = _isolation_findings(root) if root.is_dir() else []
+    return result
