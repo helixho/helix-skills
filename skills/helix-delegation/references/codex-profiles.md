@@ -4,9 +4,11 @@ Read this when installing or diagnosing roles. Ordinary dispatch uses the runtim
 
 ## Install
 
-The four templates in `assets/codex-agents/` are the source for role names, model
-and effort defaults, and instructions. Copy the selected files into
-`~/.codex/agents/` or `<project>/.codex/agents/`. Compare existing same-named files
+The four templates in `assets/codex-agents/` are the source for role names and
+instructions; they carry no model. Copy the selected files into
+`~/.codex/agents/` or `<project>/.codex/agents/` and set `model` and
+`model_reasoning_effort` in the installed copy when a role needs its own model;
+without them the role runs on the `[agents]` default. Compare existing same-named files
 before replacing them; leave unrelated profiles alone.
 
 | Role | Purpose |
@@ -16,16 +18,15 @@ before replacing them; leave unrelated profiles alone.
 | Reviewer | Independently review a stable result. |
 | ExpertAdvisor | Independently investigate a complex decision or assigned outcome. |
 
-Defaults are examples for accounts that offer those models. Select available
-models at installation; this skill does not require a private provider, a fixed
-model allowlist, or access to every template's model.
+Model choice belongs to the runtime: the installed profile or the `[agents]`
+default. This skill does not require a private provider or a fixed model list.
 
 ## Precedence and verification
 
 A custom agent file's model and effort take precedence over explicit spawn
 values. Before the file is applied, settings resolve from the explicit spawn,
 then the corresponding `[agents]` default, then the parent. Set effort along
-with model when changing templates so the inherited effort remains compatible.
+with model in an installed profile so the inherited effort remains compatible.
 See [official custom-agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents#custom-agents).
 
 An optional `[agents]` default model/effort can limit the cost of accidentally

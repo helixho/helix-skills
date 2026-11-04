@@ -1,8 +1,6 @@
 ---
 name: Reviewer
 description: Independent reviewer of stable work; reports findings without changing the work.
-model: opus
-effort: high
 disallowedTools: Edit, Write, NotebookEdit, Agent
 ---
 

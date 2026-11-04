@@ -1,8 +1,6 @@
 ---
 name: Executor
 description: Implements an assigned result within clear write ownership.
-model: sonnet
-effort: high
 disallowedTools: Agent
 ---
 

@@ -1,8 +1,6 @@
 ---
 name: ExpertAdvisor
 description: Independent expert for complex decisions, modeling, computer automation, or unresolved problems.
-model: opus
-effort: high
 disallowedTools: Agent
 ---
 

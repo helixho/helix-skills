@@ -1,7 +1,5 @@
 name = "Reviewer"
 description = "Independent reviewer of stable work, able to save findings as Markdown when useful."
-model = "gpt-6.1-sol"
-model_reasoning_effort = "high"
 nickname_candidates = ["Athena", "Cato", "Iris", "Sage"]
 
 developer_instructions = """

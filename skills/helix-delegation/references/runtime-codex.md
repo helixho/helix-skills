@@ -21,7 +21,7 @@ For each dispatch, name the intended `agent_type`; a spawn without one runs as a
 
 ## Model selection
 
-Models and effort come from the installed profiles; [profile setup](codex-profiles.md) explains how they resolve. Do not pass `model` or `reasoning_effort` at dispatch and do not use the built-in `worker` to pick a model. A role that needs a different model gets it by changing or adding a profile, not per task. A full-history fork inherits the parent's model and effort.
+Models and effort come from the installed profiles; [profile setup](codex-profiles.md) explains how they resolve. Do not pass `model` or `reasoning_effort` at dispatch and do not use the built-in `worker` to pick a model. A role that needs a different model gets it in its installed profile, not in the skill's templates or per task. A full-history fork inherits the parent's model and effort.
 
 ## Context and handoff
 

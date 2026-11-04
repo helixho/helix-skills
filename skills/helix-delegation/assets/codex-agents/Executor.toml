@@ -1,7 +1,5 @@
 name = "Executor"
 description = "Implements an assigned result within clear write ownership."
-model = "gpt-6-luna"
-model_reasoning_effort = "high"
 nickname_candidates = ["Forge", "Milo", "Nori", "Pico"]
 
 developer_instructions = """
