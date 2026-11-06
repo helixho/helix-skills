@@ -14,20 +14,23 @@ Two uses: assess a skill, or judge what an external skill offers.
 
 The default for any request to assess, check, or score a skill.
 
-1. Run `validate` with the skill's source directory as `skill_dir`; for a
-   published skill add `"public": true` to scan for personal home paths. It
-   also lists every file in the skill; step 2 accounts for each one. Every
-   conformance error and personal home path it reports is a finding. If the directory has
-   no usable root `SKILL.md`, assess the nested skills it contains instead, or
-   report that and stop when there are none.
-2. Apply `references/review-guide.md`: settle Positioning first, then judge each
-   dimension with its checks, labeling every piece of evidence as the guide
-   describes.
-3. Score the nine dimensions of `references/scorecard-rubric.md` and submit them
-   with `evaluate`, passing `skill_dir`, the labeled `evidence`, `findings`, and
-   `suggestions`. It computes the content hash and the average.
-4. Report prioritized improvements tied to findings, with the scores as a
-   summary.
+1. Establish the user's goal, designated scope, constraints and relevant preferences.
+   Run `validate` with `skill_dir`; add `"public": true` for a published skill.
+   Keep its `content_hash` as the reviewed version and account for every listed file.
+   If there is no usable root `SKILL.md`, assess nested skills, or report and stop.
+2. Apply [review-guide.md](references/review-guide.md): establish positioning,
+   interpret lint in context, inspect source and relevant tests, and obtain external
+   evidence when it could change a recommendation. AI integrates these inputs;
+   a lint pass or warning is not the overall verdict.
+3. Recheck candidate findings against context, exceptions and counter-evidence.
+   Recommend the smallest useful change, or retention when no change is justified.
+   Score the nine dimensions in [scorecard-rubric.md](references/scorecard-rubric.md).
+4. Submit `evaluate` with the original hash as `expected_content_hash` and the
+   evidence, findings and suggestions defined in [report-contract.md](references/report-contract.md).
+   If source changed, inspect the changes and redo affected judgments before
+   obtaining a new hash; never refresh the hash just to bypass the check.
+5. Present AI's overall conclusion and prioritized recommendations, their evidence,
+   tradeoffs and verification limits; scores summarize the review, not dictate it.
 
 For several skills, assess each one, then rank the improvements across them.
 
@@ -44,7 +47,7 @@ it.
 Run `python3 scripts/run.py` (Python 3.11+ with PyYAML from
 `scripts/requirements.txt`). It reads one JSON request on stdin, writes one JSON
 result on stdout, and keeps no state. Commands: `describe`, `validate`,
-`evaluate`. The rubric is built in and its ID and file hash are recorded with
+`evaluate`. The report contract includes a complete request example. The rubric is built in and its ID and file hash are recorded with
 every scorecard; a caller cannot supply or override it.
 
 The design is in `references/architecture.md` and the concepts in
@@ -58,3 +61,13 @@ The design is in `references/architecture.md` and the concepts in
 - Assess source only; no scorecard claims runtime verification.
 - Suggestions are advisory. Edits and runtime link changes happen outside this
   skill after the user approves them.
+
+## Feedback and verification
+
+Correct the current review first. Turn reproducible mechanical errors into checks,
+judgment errors into acceptance cases, and only general method gaps into instructions.
+Keep one-off preferences in task context; change standing rules only when confirmed.
+Rerun affected checks after changes. Generated reports stay outside the skill package.
+For each material claim distinguish automatic verification, AI assessment, human
+confirmation and unverified work, naming the object and evidence. Local citation
+checks do not establish semantic support; source review is not runtime verification.

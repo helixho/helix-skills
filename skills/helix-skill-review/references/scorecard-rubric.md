@@ -42,8 +42,8 @@ available. Judge each dimension with its checks in `review-guide.md`.
 
 ## Evidence
 
-Record file-backed evidence: source content, conformance, dependencies, and
-deterministic checks run against the source. This rubric assesses source only;
+Use the evidence kinds defined in `review-guide.md`: source, check results,
+external sources, user statements, inference and missing evidence. This rubric assesses source only;
 it does not test runtime behavior, and a score is never evidence of it.
 
 ## Portability review rules

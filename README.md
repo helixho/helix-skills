@@ -16,7 +16,7 @@ Each skill is a self-contained directory with a `SKILL.md` entry point and any t
 | [helix-logic-review](skills/helix-logic-review/SKILL.md) | Review any content against the four laws of logic, the rules of definition and division (MECE), and common fallacies (straw man, slippery slope, false dilemma, and more) for fallacies, contradictions, overlaps, and gaps. | “Use rule review to check whether these rules contradict each other.” |
 | [helix-skill-review](skills/helix-skill-review/SKILL.md) | Assess skills for improvements by critical thinking, MECE, Occam's razor, independence, the Agent Skills specification, and progressive disclosure; judge what an external skill offers your own. | “Check this skill's structure; use the full assessment only if a score is needed.” |
 
-`helix-clarify`, `helix-handoff`, and `helix-logic-review` use instructions or templates. Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-review` scripts require Python 3.11+ and PyYAML.
+`helix-clarify` and `helix-handoff` use instructions or templates. Logic Review combines AI judgment with applicable checks; its optional acceptance-case helper needs Python 3.11+ (standard library only). Delegation uses the host runtime; its optional local usage reporter needs Python 3.10+. The `helix-skill-review` scripts require Python 3.11+ and PyYAML.
 
 ## Get started
 
@@ -101,7 +101,7 @@ Run all automated checks:
 
 This checks each skill under `skills/` for structural conformance, relative Markdown links, and personal home paths, then recursively runs `test_*.py` under `tests/`. Structural errors, personal home paths, test loading errors, failed tests, or no discovered tests produce a nonzero exit code. Compatible runtime extensions are reported as warnings. GitHub Actions runs the same entrypoint on pushes, pull requests, and manual dispatch.
 
-Automated tests cover the Delegation usage reporter, the Skill Review script entrypoint contract, and the repository checker's test discovery and failure propagation. Tests use synthetic traces and temporary fixtures, never real sessions. `tests/skills/helix-logic-review/cases.md` contains model behavior acceptance cases that must be run separately; they are outside the automated suite. Passing structural checks and script tests does not establish model behavior.
+Automated tests cover the Delegation usage reporter, the Skill Review script entrypoint and evidence contracts, the Logic Review case helper, and the repository checker's test discovery and failure propagation. Tests use synthetic traces and temporary fixtures, never real sessions. `tests/skills/helix-logic-review/cases.md` and `tests/skills/helix-skill-review/cases.md` contain model behavior acceptance cases that must be run separately. Use `python3 skills/helix-logic-review/scripts/cases.py --help` for blind input preparation, AI judging packets and summaries. The helper checks coverage and version consistency; AI judges semantics. It does not call a model itself. Passing structural checks and script tests does not establish model behavior.
 
 To check just one skill, use the existing entrypoint:
 

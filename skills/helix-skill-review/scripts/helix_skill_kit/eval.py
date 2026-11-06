@@ -88,9 +88,9 @@ class EvaluationService:
         identity: SkillIdentity,
         content_hash: str,
         scores: dict[str, float],
-        evidence: list[str],
-        findings: list[str],
-        suggestions: list[str],
+        evidence: list[dict[str, Any]],
+        findings: list[dict[str, Any]],
+        suggestions: list[dict[str, Any]],
         assessed_at: str | None = None,
     ) -> dict[str, Any]:
         assessment = evaluate_scores(scores, self.rubric)

@@ -45,6 +45,8 @@ def evaluate(skill, **extra):
         "skill_unit": "demo-skill",
         "skill_dir": str(skill),
         "scores": {name: 4 for name in DIMENSIONS},
+        "expected_content_hash": call({"command": "validate", "skill_dir": str(skill)})["result"]["content_hash"],
+        "evidence": [{"id": "E1", "kind": "file-backed", "source": "SKILL.md", "line": 4, "detail": "Body exists."}],
         **extra,
     })
 
@@ -95,6 +97,52 @@ class ValidateTests(unittest.TestCase):
 
 
 class EvaluateTests(unittest.TestCase):
+    def test_source_drift_and_missing_snapshot_fail(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp)
+            before = call({"command": "validate", "skill_dir": str(skill)})["result"]["content_hash"]
+            (skill / "SKILL.md").write_text("changed\n", encoding="utf-8")
+            self.assertIn("source changed", evaluate(skill, expected_content_hash=before)["error"]["message"])
+            self.assertFalse(evaluate(skill, expected_content_hash=None)["ok"])
+
+    def test_empty_unlabeled_or_dangling_evidence_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp)
+            for evidence in ([], ["unlabeled"], [{"id": "E1", "kind": "unknown"}]):
+                self.assertFalse(evaluate(skill, evidence=evidence)["ok"])
+            finding = {"id": "F1", "detail": "Gap", "evidence_ids": ["missing"]}
+            self.assertFalse(evaluate(skill, findings=[finding])["ok"])
+
+    def test_citation_location_is_checked_but_not_semantics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp)
+            evidence = {"id": "E1", "kind": "file-backed", "source": "SKILL.md", "line": 999, "detail": "Claim"}
+            self.assertFalse(evaluate(skill, evidence=[evidence])["ok"])
+            evidence["line"] = 4
+            self.assertTrue(evaluate(skill, evidence=[evidence])["ok"])
+            evidence["source"] = "absent.md"
+            self.assertFalse(evaluate(skill, evidence=[evidence])["ok"])
+
+    def test_findings_and_suggestions_must_link(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp)
+            finding = {"id": "F1", "detail": "Missing completion check", "evidence_ids": ["E1"]}
+            suggestion = {"detail": "Add completion check", "finding_ids": ["F1"]}
+            self.assertFalse(evaluate(skill, findings=[finding])["ok"])
+            self.assertTrue(evaluate(skill, findings=[finding], suggestions=[suggestion])["ok"])
+            self.assertFalse(evaluate(skill, findings=[finding, finding], suggestions=[suggestion])["ok"])
+            suggestion["finding_ids"] = ["unknown"]
+            self.assertFalse(evaluate(skill, findings=[finding], suggestions=[suggestion])["ok"])
+
+    def test_external_and_user_evidence_are_distinct_from_file_checks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp)
+            evidence = [{"id": "E1", "kind": "external-backed", "source": "https://example.com/docs", "detail": "Observed behavior; retrieved during review."},
+                        {"id": "E2", "kind": "user-stated", "source": "current request", "detail": "Private single-user use."}]
+            self.assertTrue(evaluate(skill, evidence=evidence)["ok"])
+            evidence[0]["source"] = "not a URL"
+            self.assertFalse(evaluate(skill, evidence=evidence)["ok"])
+
     def test_average_and_rubric(self):
         with tempfile.TemporaryDirectory() as tmp:
             assessment = evaluate(write_skill(tmp))["result"]["assessment"]
@@ -124,13 +172,7 @@ class EvaluateTests(unittest.TestCase):
 
     def test_dimension_mismatch_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
-            response = call({
-                "command": "evaluate",
-                "source_project": "fixture",
-                "skill_unit": "demo-skill",
-                "skill_dir": str(write_skill(tmp)),
-                "scores": {"Value and fit": 4},
-            })
+            response = evaluate(write_skill(tmp), scores={"Value and fit": 4})
         self.assertFalse(response["ok"])
         self.assertIn("missing=", response["error"]["message"])
 

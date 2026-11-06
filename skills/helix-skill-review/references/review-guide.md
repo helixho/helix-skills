@@ -31,11 +31,38 @@ When a finding violates one of these principles, name the principle.
 Label every piece of evidence by what supports it; a finding carries the labels
 of its evidence:
 
-- `file-backed`: cites a file and line, or a deterministic check result.
-- `inferred`: reasoned from the source without direct confirmation.
-- `missing`: needed for the judgment but not available.
+- `file-backed`: source file and line.
+- `check-backed`: an actual deterministic check, with command, object and observed result.
+- `external-backed`: a retrieved external source, with direct URL and relevant evidence.
+- `user-stated`: an explicit user statement or confirmed preference, with context.
+- `inferred`: reasoned from evidence without direct confirmation.
+- `missing`: needed evidence is unavailable; state what remains unknown.
 
-Never present inferred or missing evidence as file-backed.
+Use the machine-readable report contract linked from `SKILL.md`.
+A resolvable citation does not prove that it supports a finding. AI must assess
+support, scope, uncertainty and counter-evidence. Never promote inference or
+missing evidence into confirmed facts.
+
+## Integrating checks, context and external information
+
+Lint supplies facts about the checks it ran. Interpret every reported error or
+warning against the target's intended environment and the user's task; retain
+valid findings and explain inapplicable results rather than blindly counting them.
+A clean lint result does not establish that the workflow is complete or useful.
+
+Use the user's expressed goals, constraints and habits to judge suitability and
+prioritize recommendations. Distinguish personal fit from a general defect;
+do not invent preferences or turn one-off requests into standing requirements.
+When a recommendation depends on changeable product behavior, external standards
+or an unfamiliar dependency, consult relevant current primary sources through
+available search tools. Cite what was actually read, its date when relevant, and
+its effect on the recommendation. If unavailable, qualify the conclusion.
+Do not expand a source review into installation, runtime tests or a full fact audit.
+
+Before reporting a finding, try the strongest context-supported alternative
+interpretation, inspect exceptions and compare the suggested change with leaving
+it as is. Withdraw unsupported findings. Coverage and importance are separate:
+retain supported findings, prioritizing by effect on this user's actual task.
 
 ## Positioning
 
@@ -208,7 +235,9 @@ into the target, or not adopting.
 ## Recommendations
 
 End with prioritized, concrete improvements to the assessed or target skill,
-each tied to a finding. When warranted, add one lifecycle suggestion: keep,
+each tied to a finding. Explain benefit, cost and remaining uncertainty.
+No justified change is a valid outcome. Scores never automatically determine
+retirement, merging or restructuring. When warranted, add one lifecycle suggestion: keep,
 merge into another skill, absorb parts into another skill, archive, or not
 adopt. Suggestions are advisory; edits happen outside this skill after the user
 approves them.

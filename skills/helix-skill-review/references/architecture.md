@@ -13,7 +13,7 @@ type: architecture
 - name: Eval
   responsibility: 验证 skill 结构并形成评价、review findings 与建议。
   boundary: 不修改 source，不执行 runtime 操作，不替用户做生命周期决定。
-  interfaces: validation, assessment and report contract
+  interfaces: validation, assessment and linked evidence report contract
 - name: Management Core
   responsibility: 计算评价。
   boundary: 只处理评估输入与结果，不介入外部运行时状态。
@@ -22,7 +22,7 @@ type: architecture
 ## stack_decisions
 
 - decision: evaluation execution
-  chosen: stateless Python 3.12 CLI
+  chosen: stateless Python 3.11+ CLI
   rationale: 评估结果可由输入和内容快照重建，不需要 inventory、daemon 或持久化数据库。
   rejected_alternatives: SQLite assessment registry; always-on service
 - decision: source boundary

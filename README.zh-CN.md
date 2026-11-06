@@ -16,7 +16,7 @@
 | [helix-logic-review](skills/helix-logic-review/SKILL.md) | 依据逻辑学四条基本规律、定义与划分规则（MECE）和常见谬误（稻草人、滑坡、虚假两难等），审查任何内容中的谬误、矛盾、重叠与缺失 | “用 rule review 检查这份规则有没有互相矛盾的地方。” |
 | [helix-skill-review](skills/helix-skill-review/SKILL.md) | 按批判性思维、MECE、奥卡姆剃刀、独立性以及 Agent Skills 规范和渐进式披露评估 skill，找出改进点；也判断外部 skill 有什么值得借鉴 | “检查这个 skill 的结构；需要评分时再做完整评估。” |
 
-`helix-clarify`、`helix-handoff`、`helix-logic-review` 只含指令或模板。Delegation 使用宿主运行时，其可选本地用量统计脚本需要 Python 3.10+；`helix-skill-review` 的脚本需要 Python 3.11+ 和 PyYAML。
+`helix-clarify`、`helix-handoff` 只含指令或模板。Logic Review 结合 AI 判断与适用的程序检查，可选的验收案例工具需要 Python 3.11+（仅标准库）。Delegation 使用宿主运行时，其可选本地用量统计脚本需要 Python 3.10+；`helix-skill-review` 的脚本需要 Python 3.11+ 和 PyYAML。
 
 ## 开始使用
 
@@ -101,7 +101,7 @@ python3 -m venv .venv
 
 该命令逐个检查 `skills/` 下的 skill 结构、相对 Markdown 链接与个人主目录路径，并递归运行 `tests/` 下的 `test_*.py`。结构错误、个人主目录路径、测试加载错误、测试失败或没有发现测试时返回非零退出码；兼容的运行时扩展仅显示警告。GitHub Actions 在 push、pull request 和手动触发时运行相同入口。
 
-自动测试覆盖 Delegation 用量统计、Skill Review 的脚本入口契约，以及统一检查的测试发现与失败传递。测试使用合成轨迹和临时样本，不读取真实会话。`tests/skills/helix-logic-review/cases.md` 是需单独执行的模型行为验收案例，不属于自动测试；结构检查和脚本测试通过不代表模型行为已经验证。
+自动测试覆盖 Delegation 用量统计、Skill Review 的入口与证据契约、Logic Review 的案例工具，以及统一检查的测试发现与失败传递。测试使用合成轨迹和临时样本，不读取真实会话。`tests/skills/helix-logic-review/cases.md` 与 `tests/skills/helix-skill-review/cases.md` 是需单独执行的模型行为验收案例。运行 `python3 skills/helix-logic-review/scripts/cases.py --help` 查看输入准备、AI 判卷材料和汇总用法；工具检查覆盖与版本一致性，语义由 AI 判定，工具自身不调用模型。结构检查和脚本测试通过不代表模型行为已经验证。
 
 仅检查一个 skill 时，可调用现有入口：
 

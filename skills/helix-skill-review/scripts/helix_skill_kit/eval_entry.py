@@ -10,17 +10,12 @@ from .contracts import ContractError, JsonResult, json_error, json_success, read
 from .conformance import validate_skill_directory
 from .eval import EvaluationService, load_rubric
 from .identity import content_hash, make_identity
+from .report import check_report
 
 
 def _required_text(value: Any, name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ContractError(f"{name} must be a non-empty string")
-    return value
-
-
-def _text_list(value: Any, name: str) -> list[str]:
-    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
-        raise ContractError(f"{name} must be a list of strings")
     return value
 
 
@@ -35,16 +30,23 @@ def _item(value: Any) -> dict[str, Any]:
     scores = value.get("scores")
     if not isinstance(scores, dict):
         raise ContractError("scores must be an object")
+    actual_hash = content_hash(skill_dir)
+    expected_hash = _required_text(value.get("expected_content_hash"), "expected_content_hash from validate")
+    if expected_hash != actual_hash:
+        raise ContractError("source changed since validate; review affected content and validate again")
+    evidence, findings, suggestions = check_report(value, skill_dir)
+    if content_hash(skill_dir) != actual_hash:
+        raise ContractError("source changed while checking report; review affected content again")
     return {
         "identity": make_identity(
             _required_text(value.get("source_project"), "source_project"),
             _required_text(value.get("skill_unit"), "skill_unit"),
         ),
-        "content_hash": content_hash(skill_dir),
+        "content_hash": actual_hash,
         "scores": scores,
-        "evidence": _text_list(value.get("evidence", []), "evidence"),
-        "findings": _text_list(value.get("findings", []), "findings"),
-        "suggestions": _text_list(value.get("suggestions", []), "suggestions"),
+        "evidence": evidence,
+        "findings": findings,
+        "suggestions": suggestions,
     }
 
 
@@ -68,12 +70,15 @@ def handle(request: dict[str, Any]) -> JsonResult:
             public = request.get("public", False)
             if not isinstance(public, bool):
                 raise ContractError("public must be a boolean")
-            return json_success(**validate_skill_directory(skill_dir, public=public))
+            result = validate_skill_directory(skill_dir, public=public)
+            if skill_dir.expanduser().is_dir():
+                result["content_hash"] = content_hash(skill_dir)
+            return json_success(**result)
         if command == "evaluate":
             item = _item(request)
             return json_success(assessment=EvaluationService().evaluate(**item))
         return json_error("unknown_command", "command must be describe, validate, or evaluate")
-    except (KeyError, TypeError, ValueError, ContractError) as exc:
+    except (KeyError, TypeError, ValueError, OSError, ContractError) as exc:
         return json_error("invalid_request", str(exc))
 
 
